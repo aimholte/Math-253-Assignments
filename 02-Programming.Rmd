@@ -2,6 +2,27 @@
 
 Your work goes here ...
 
+## Task 1
+#```{r}
+#download.file("http://www-bcf.usc.edu/~gareth/ISL/Auto.csv",destfile="Auto.csv")
+#```
+
+## Task 2
+```{r}
+Auto <- read.csv("/home/local/MAC/aimholte/Math-253-Assignments-2.0/Auto.csv")
+```
+
+## Task 3
+```{r}
+task3 <- summary(Auto$horsepower)
+```
+
+## Task 4
+```{r}
+
+```
+
+
 
 
 ## Test statements
