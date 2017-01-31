@@ -2,6 +2,16 @@
 
 Your work goes here ...
 
+```{r}
+#Task 1
+data(College, package = "ISLR")
+
+#Task 2
+Yield <- College["Enroll"]/College["Accept"]
+
+#Task 3
+all_indices <- 1:nrow(College)
+```
 
 
 ## Test statements
