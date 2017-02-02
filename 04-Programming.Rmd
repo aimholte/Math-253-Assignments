@@ -2,6 +2,31 @@
 
 Your work goes here ...
 
+#Testing out commands
+```{r}
+plot(1, type = "n", xlim = c(0,100), ylim=c(-10,10))
+points(c(40,60), c(-5,5), pch = 20, col = c("seagreen4","red"))
+lines(c(40,60), c(-5,5), col = "red")
+lines(c(0,100), c(-10,8), col = "green", lwd = 5)
+text(c(40,20), c(-8,5), c("hello","goodybe"))
+polygon(c(0,40,40), c(-10,-10,10), col = "tomato")
+```
+
+#Task 1
+```{r}
+plot(1, xlim = c(0, 100), ylim = c(0,100), type="n")
+#Task 2
+x1 <- points(0,0,pch = 20)
+y1 <- points(0,100, pch = 20)
+lines(c(0,0), c(0,100))
+x2 <- points(100,0, pch=20)
+y2 <- points(100,100, pch=20)
+lines(c(0,100,100,0),c(100,100,0,0))
+#Task 3
+x3 <- lines(c(cos(seq(0,2*pi))))
+y3 <- lines(sin(seq(0,2*pi))))
+```
+
 
 
 ## Test statements
