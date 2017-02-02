@@ -23,8 +23,8 @@ x2 <- points(100,0, pch=20)
 y2 <- points(100,100, pch=20)
 lines(c(0,100,100,0),c(100,100,0,0))
 #Task 3
-x3 <- lines(c(cos(seq(0,2*pi))))
-y3 <- lines(sin(seq(0,2*pi))))
+#x3 <- lines(c(cos(seq(0,2*pi))))
+#y3 <- lines(sin(seq(0,2*pi))))
 ```
 
 
