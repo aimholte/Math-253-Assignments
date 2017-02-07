@@ -2,6 +2,18 @@
 
 Your work goes here ...
 
+```{r}
+#Task 1
+library("mosaicData", lib.loc = "~/R/library")
+nbins <- 10
+
+#Task 2
+evenly_spaced <- c(min(Galton$height),max(Galton$height), nbins + 1)
+#SEND HELP
+
+#Task 3
+```
+
 
 
 ## Test statements
