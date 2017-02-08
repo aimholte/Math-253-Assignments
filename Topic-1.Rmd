@@ -1,2 +1,44 @@
+# A.J. Imholte
+# Math 253
 # Topic 1 Exercises
 
+2.4.1 - Flexible versus Inflexible Models
+  a. The sample size n is extremely large and the number of predictors p is small.
+  
+  A flexible model would be better situation. Because n is large, the chances of overfitting are low even when using a flexible model. At the same time, flexible models tend to reduce bias that an inflexible model would not be able to do.
+  
+  b. The number of predictors p is extremly large and the sample size n is extremely small.
+  
+  An inflexible model works better here. Because the sample size is small, using a flexible model would cause a larger increase in variance in comparison to the reduction in bias by using a flexible model. Because of the increase in variance being larger the reduction in bias, this would result in an overfitting if using a flexible model. Thus, inflexible models are better in this case.
+  
+  c. The relationship between predictors and responses are highly non-linear.
+  
+  A flexible model is needed here because a flexible model will be able to capture the non-linear effect, whereas inflexible models would not.
+  
+  d. The variance of error terms is extremely high.
+  
+  An inflexible model would work better in this case, since a flexible model would capture too much of the "noise" in the data due to the higher variance in the error terms. So, a inflexible model would better address data with high variance in error terms in this case.
+  
+2.4.2
+  a) Based on the data from several companies, this is a regression problem, since we are interested in knowing how each variable (profit, number of employees, and industry) affects a CEO's salary in a quantitative way. Since we are interested in learning more aobut these possible relationships, the main purpose of this model would be for inference instead of prediction.
+  
+  b) This is a classification problem since there are two possible outputs for this model: success or failure. We are interested in prediction in this case, since we want to better able to predict if this product would be a success or failure if brought to market. 
+  
+  c) This is also a regression problem since we are interested in predicting the % change of the U.S. dollar, which can have several different possible output results unlike a classification problem. This model is concerned with prediction over inference, as we are concerned with predicting how much/little the % change of the U.S. dollar is affected by the other variables mentioned in the data.
+  
+2.4.8
+```{r}
+college = read.csv("College.csv",header=T)
+#fix(college)
+#View(college)
+rownames(college)=college[,1]
+#fix(college)
+college=college[,1]
+```
+
+  
+2.4.3
+  #Skip for now
+  
+2.4.6
+  A parametric statistical learning approach uses the assumption that the sample data is from a probability distribution with fixed parameters, whereas a non-parametric approach allows parameters to increase or decrease.
