@@ -26,19 +26,122 @@
   
   c) This is also a regression problem since we are interested in predicting the % change of the U.S. dollar, which can have several different possible output results unlike a classification problem. This model is concerned with prediction over inference, as we are concerned with predicting how much/little the % change of the U.S. dollar is affected by the other variables mentioned in the data.
   
+2.4.3
+a) I couldn't figure out how to sketch these error graphs in R. So I just looked them up online.
+b) The reason for the different shape of the curves is due to the way each curve attempts to address the issue of variance and bias in data. This can be plotted with flexibility on the X axis, which will give us a better understanding of how flexible/inflexible models affect these measures.
+  
 2.4.8
 ```{r}
 college = read.csv("College.csv",header=T)
 #fix(college)
 #View(college)
-rownames(college)=college[,1]
+#rownames(college)=college[,1]
 #fix(college)
-college=college[,1]
+#college=college[,1]
+#View(college)
+summary(college)
+A = matrix(college)
+pairs(college[1:10,])
+plot(college$Outstate)
+plot(college$Private)
 ```
 
+```{r}
+Elite=rep("No",nrow(college ))
+Elite[college$Top10perc >50]=" Yes"
+Elite=as.factor(Elite)
+college=data.frame(college , Elite)
+summary(Elite)
+boxplot(college$Outstate,Elite)
+```
+
+```{r}
+summary(college)
+hist(college$Accept,15)
+hist(college$Enroll,25)
+hist(college$Grad.Rate,5)
+hist(college$Books,10)
+par(mfrow=c(2,2))
+```
+Based off the data from college dataset and the graphs above, it is clear that enroll rates and acceptance rates all have a skewed distribution to the left. That is, the majority of the distribution is to the left of median of a standard normal distribution. Graduation rates seem to have a fairly normal distribution, however.
   
-2.4.3
-  #Skip for now
   
 2.4.6
   A parametric statistical learning approach uses the assumption that the sample data is from a probability distribution with fixed parameters, whereas a non-parametric approach allows parameters to increase or decrease.
+  
+2.4.7
+a) Calculating Euclidean distance: Square root of sum of squares for each observation
+From the origin, the distances are as follows:
+Observation 1: 3, Observation 2: 2, Observation 3: 3.16, Observation 4: 2.24, Observation 5: 1.41, Observation 6: 1.73
+b) Our prediction for K=1 is Green
+c) Our prediction for K=3 is Red
+d) If the Bayes decision boundary is highly non-linear, then best value for K is high. This is true because K needs to be high in order to capture the non-linear effect in the Bayes decision boundary is highly non-linear.
+
+
+2.4.9
+```{r}
+auto = read.csv("Auto.csv",header=TRUE)
+range(auto$mpg)
+range(auto$year)
+range(auto$cylinders)
+range(auto$displacement)
+#range(auto$horsepower)
+range(auto$weight)
+range(auto$acceleration)
+range(auto$origin)
+#range(auto$name)
+```
+
+```{r}
+mean(auto$mpg)
+mean(auto$cylinders)
+mean(auto$displacement)
+mean(auto$horsepower)
+mean(auto$weight)
+mean(auto$acceleration)
+mean(auto$origin)
+mean(auto$name)
+```
+
+```{r}
+standard_deviations = c(sd(auto$mpg),sd(auto$cylinders),sd(auto$displacement),sd(auto$horsepower),sd(auto$weight),sd(auto$acceleration),sd(auto$year),sd(auto$origin),sd(auto$name))
+standard_deviations
+newauto = auto[10:85,]
+range(newauto$mpg)
+range(newauto$year)
+range(newauto$cylinders)
+range(newauto$displacement)
+#range(newauto$horsepower)
+range(newauto$weight)
+range(newauto$acceleration)
+range(newauto$origin)
+#range(newauto$name)
+mean(newauto$mpg)
+mean(newauto$cylinders)
+mean(newauto$displacement)
+mean(newauto$horsepower)
+mean(newauto$weight)
+mean(newauto$acceleration)
+#mean(anewuto$origin)
+mean(newauto$name)
+new_standard_deviations = c(sd(newauto$mpg),sd(newauto$cylinders),sd(newauto$displacement),sd(newauto$horsepower),sd(newauto$weight),sd(newauto$acceleration),sd(newauto$year),sd(newauto$origin),sd(newauto$name))
+```
+```{r}
+hist(auto$cylinders)
+hist(auto$mpg)
+plot(auto$cylinders,auto$horsepower)
+plot(auto$horsepower,auto$acceleration)
+plot(auto$year,auto$acceleration)
+plot(auto$year,auto$horsepower)
+plot(auto$year,auto$mpg)
+```
+Based off these plots, it seems as though much of the data is quite "noisy". That is, there are very few clear patterns in the data between many of the variables, which can be seen clearly by the scatterplots above. The histogram of the distribution for miles per gallon was also interesting, as it displays that most cars from the dataset had mpg's ranging from 10-40 miles per gallon.
+
+```{r}
+plot(auto$year,auto$mpg)
+plot(auto$cylinders,auto$mpg)
+plot(auto$weight,auto$mpg)
+plot(auto$acceleration,auto$mpg)
+plot(auto$displacement,auto$mpg)
+```
+Based off these graphs, it seems that weight and displacement have negative effects on a car's mile per gallon while acceleration seems to have a possible positive effect. Though noisy, it seems that the amount of cyclinders could have a negative effect on a car's mpg as well.
