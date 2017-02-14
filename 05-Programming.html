@@ -127,10 +127,29 @@ library(&quot;mosaicData&quot;, lib.loc = &quot;~/R/library&quot;)
 nbins &lt;- 10
 
 #Task 2
-evenly_spaced &lt;- c(min(Galton$height),max(Galton$height), nbins + 1)
+evenly_spaced &lt;- seq(min(Galton$height),max(Galton$height), 
+                     length = nbins + 1)
 #SEND HELP
 
-#Task 3</code></pre>
+#Task 3
+bin_counts &lt;- cut(Galton$height, evenly_spaced)
+bin_counts &lt;- table(bin_counts)</code></pre>
+<pre class="r"><code>hist_basics &lt;- data.frame(xL = evenly_spaced[-length(evenly_spaced)],
+                          xR = evenly_spaced[-1], 
+                          count = as.numeric(bin_counts))
+
+hist_basics</code></pre>
+<pre><code>##      xL   xR count
+## 1  56.0 58.3     4
+## 2  58.3 60.6    26
+## 3  60.6 62.9    93
+## 4  62.9 65.2   215
+## 5  65.2 67.5   184
+## 6  67.5 69.8   152
+## 7  69.8 72.1   176
+## 8  72.1 74.4    39
+## 9  74.4 76.7     6
+## 10 76.7 79.0     2</code></pre>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>
 <pre class="r"><code>scoreActivity::score253(5)</code></pre>
@@ -138,16 +157,14 @@ evenly_spaced &lt;- c(min(Galton$height),max(Galton$height), nbins + 1)
 ## Running test statements for day  05</code></pre>
 <pre><code>## Loading required package: scoreActivity</code></pre>
 <pre><code>## Loading required package: lazyeval</code></pre>
-<pre><code>## Warning in results[k] &lt;- paste(&quot;ERROR when running &quot;, deparse(ldots[k][[1]]
-## $expr)): number of items to replace is not a multiple of replacement length</code></pre>
 <pre><code>## passed: &quot;package:mosaicData&quot; %in% search()
-## FAILED: object &quot;bin_counts&quot; doesn't exist.
+## passed: object &quot;bin_counts&quot; exists
 ## passed: length(nbins)
-## FAILED: length(evenly_spaced)
-## FAILED: all(abs(diff(diff(evenly_spaced))) &lt; 0.1)
-## ERROR when running  check(nbins, length(bin_counts))
-## FAILED: object &quot;hist_basics&quot; doesn't exist.
-## ERROR when running  check(TRUE, all(c(&quot;xL&quot;, &quot;xR&quot;, &quot;count&quot;) %in% names(hist_basics)), 
+## passed: length(evenly_spaced)
+## passed: all(abs(diff(diff(evenly_spaced))) &lt; 0.1)
+## passed: length(bin_counts)
+## passed: object &quot;hist_basics&quot; exists
+## passed: all(c(&quot;xL&quot;, &quot;xR&quot;, &quot;count&quot;) %in% names(hist_basics))
 ## FAILED: object &quot;make_one_bar&quot; doesn't exist.</code></pre>
 </div>
 </div>
