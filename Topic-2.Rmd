@@ -1,2 +1,129 @@
 # Topic 2 Exercises: Linear Regression
+# AJ Imholte
+# Math 253
 
+3.6.1
+```{r}
+library(MASS)
+library(ISLR)
+```
+
+3.6.2
+```{r}
+lm.fit=lm(medv~lstat,data=Boston)
+lm.fit
+summary(lm.fit)
+names(lm.fit)
+confint(lm.fit)
+predict (lm.fit ,data.frame(lstat=(c(5,10,15))), interval="confidence")
+predict(lm.fit,data.frame(lstat=(c(5,10,15))),interval="prediction")
+```
+```{r}
+attach(Boston)
+plot(lstat,medv)
+abline(lm.fit)
+abline(lm.fit ,lwd=3)
+abline(lm.fit,lwd=3,col="red")
+plot(lstat,medv,col="red")
+plot(lstat,medv,pch=20)
+plot(lstat,medv,pch="+")
+plot(1:20,1:20,pch=1:20)
+par(mfrow=c(2,2))
+plot(lm.fit)
+plot(predict(lm.fit),residuals(lm.fit))
+plot(predict(lm.fit),rstudent(lm.fit))
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+3.6.3
+```{r}
+lm.fit=lm(medv~lstat+age,data=Boston)
+summary(lm.fit)
+```
+```{r}
+lm.fit=lm(medv~.,data=Boston)
+summary(lm.fit)
+summary(lm.fit)$r.sq
+summary(lm.fit)$sigma
+library(car)
+vif(lm.fit)
+```
+```{r}
+lm.fit1=lm(medv~.,-age,data=Boston)
+summary(lm.fit1)
+```
+3.6.4
+```{r}
+summary(lm(medv~lstat*age,data=Boston))
+```
+3.6.5
+```{r}
+lm.fit2=lm(medv~lstat+I(lstat^2),data=Boston)
+summary(lm.fit2)
+lm.fit=lm(medv~lstat)
+anova(lm.fit,lm.fit2)
+par(mfrow=c(2,2))
+plot(lm.fit2)
+lm.fit5=lm(medv~poly(lstat,5))
+summary(lm.fit5)
+summary(lm(medv~log(rm),data=Boston))
+```
+3.6.6
+```{r}
+lm.fit=lm(Sales~.+Income:Advertising+Price:Age,data=Carseats)
+summary
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+3.6.7
+```{r}
+LoadLibraries=function(){
+library(ISLR)
+library(MASS)
+print("The libraries have been loaded.")
+}
+LoadLibraries()
+```
+```{r}
+set.seed(1)
+x<-rnorm(100,0,1)
+eps=rnorm(100,0,3.0)
+y<- -1+0.5*x+eps
+lm1=lm(y~x)
+summary(lm1)
+length(y)
+confint(lm1)
+```
+The length of vector y is 100. The values of B0 and B1 are -1.00 and 0.5 respectively.
+```{r}
+plot(x,y)
+abline(lm1,col="red")
+#legend(c(-0.5,0.5),c(0,0),"The Relationship Between x and y (Regression Line Included")
+```
+Based off the scatterplot, it seems clear that there is a positive, linear relationship between x and y.
+A least squares model (see last section) yields estimates of B0 and B1 very close to their true values of 1 and 0.5.
+```{r}
+lm2=lm(y~x)
+summary(lm2)
+coefficients(lm2)
+lm3=lm(y~x+I(x^2))
+summary(lm3)
+coefficients(lm3)
+```
+Based off these results, the quadratic term does not make the model better. Adjusted R-squared is basically unchanged, and the coefficient is not statistically significant from zero (look at t statistic and p value). Since there is less variance in the data. T Statistics are better since we have a less noise in the data. Thus, we are less are more sure that the estimates of B0 and B1 then what they were prior.
+
+i) When the variance in the data is higher, the exact opposite is true. The regression line is worse fit to  the data then prior where the variance in the data was lower. In addition, the the coefficient estimates were also farther away from the true values along with lower t stats and higher p values. Thus, do the higher variance in the data, our estimates of B0 and B1 are less accurate than prior when the variance was lower.
+
+j) Original variance:                  2.5 %     97.5 %
+(Intercept) -1.0575402 -0.9613061
+x            0.4462897  0.5531801
+   Lower variance:
+                 2.5 %     97.5 %
+(Intercept) -1.0230161 -0.9845224
+x            0.4785159  0.5212720
+   Higher variance:
+                 2.5 %     97.5 %
+(Intercept) -1.6904822 -0.5356735
+x           -0.1445235  1.1381612
+
+The range of values between the confidence internvals increases/decreases as  variance increases/decreases.
