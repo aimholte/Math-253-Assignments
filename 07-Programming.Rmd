@@ -1,6 +1,25 @@
 # In-Class Programming Activity, Day 7
 
 Your work goes here ...
+```{r}
+vals <- rexp(10,(1/100))
+#vals
+test200 <- dexp(vals, rate = (1/200), log = TRUE)
+test200
+sum(test200)
+LL_exp <- function(rate){
+  sum(dexp(vals,rate,log = TRUE))
+}
+LL_exp((1/200))
+rates <- c(1/200:1/50)
+results <- sapply(rates, LL_exp)
+results
+plot(1/rates,results)
+exp_results <- optimize(LL_exp, 
+                        lower=1/200, upper=1/50,
+                        maximum = TRUE)
+exp_results
+```
 
 
 
