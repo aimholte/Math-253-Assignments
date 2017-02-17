@@ -402,7 +402,7 @@ summary(lm.fit5)</code></pre>
 summary</code></pre>
 <pre><code>## function (object, ...) 
 ## UseMethod(&quot;summary&quot;)
-## &lt;bytecode: 0x2676fe8&gt;
+## &lt;bytecode: 0x2ae35a0&gt;
 ## &lt;environment: namespace:base&gt;</code></pre>
 <pre class="r"><code>attach(Carseats)
 contrasts(ShelveLoc)</code></pre>
@@ -509,6 +509,22 @@ summary(lm3)</code></pre>
 <li>Original variance: 2.5 % 97.5 % (Intercept) -1.0575402 -0.9613061 x 0.4462897 0.5531801 Lower variance: 2.5 % 97.5 % (Intercept) -1.0230161 -0.9845224 x 0.4785159 0.5212720 Higher variance: 2.5 % 97.5 % (Intercept) -1.6904822 -0.5356735 x -0.1445235 1.1381612</li>
 </ol>
 <p>The range of values between the confidence internvals increases/decreases as variance increases/decreases.</p>
+<p>P. 66 Reading question - The statement is about figure 3.1 makes sense in this case because we assume that variance (sigma^2) is uncorrelated with the errors e_i. It is clear that this is untrue when looking at the graph in figure 3.1 since when the variance seems to increase with n along with the error terms e_i as n gets larger.</p>
+<p>P. 77 Reading question - In the case where the number of predictions p is greater than the number of predictors n, least squares regression cannot be used because there are more predictors being estimated than observations from which they are being estimated. Thus, several statistics that are commonly reported (standard error, t-stats, p-values for coefficients) cannot be computed. Without these statistics, we can’t judge if the model is good/bad from least squares estimation in this case.</p>
+<p>3.7.3 a) Statement II is true. While males would earn more than females in the absolute case of a 4.0 gpa and a max IQ of 161, females make more on average in every case.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>salary = 50 + 20 * 4.0 + 0.07 * 100 + 35 + 0.01 (110 * 4.0) - 10 * 4.0</li>
+</ol>
+<p>The salary for a female with a IQ of 110 and a GPA of 4.0 is approximately $137,000.</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>False! The coefficients do not tell us anything about statistical significance. In order to justify evidence of an interaction effect, one would have to look at the t-stat/p-value of the interaction term to determine if the estimate is statistically different from 0.</li>
+</ol>
+<p>3.7.4 a) Based off the information given, we would expect that the residual sum of squares for the cubic regression would be less than that for the linear regression. This is so due to the nature in which least squares estimates and optimizes the model. By adding more explanatory variables to the regression (whether they are theoretically correct and match the true form of y) more explanatory variables always decreases RSS which subsequently increases R^2 and the amount of variation in the data that the model is capturing.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li><p>Using testing rather than training RSS, we would expect the linear regression estimate to have a lower RSS. When applying the cubic regressional form to training data, the model will capture - on average - more of the variance in that dataset. However, as n (the number of observations) becomes significantly larger) the linear regression will be a better estimate of the true value of Y, since predictions of Y get closer to the true value of Y as the more data is implemented to calculate the estimate.</p></li>
+<li><p>There is not enough information to tell based off the information given. If the relationship is more linear than nonlinear, then we would expect the cubic regression to perform better on the training data and have a lower RSS. Conversely - if the true relationship is highly non-linear, we would expect the linear model to perfom better on training data and have a lower RSS in this case.</p></li>
+<li><p>Once again - it depends on the degree to which linearity/non-linearity exists. With training RSS, if the relationship is closer to linear than non-linear, than the linear estimation will perform better on testing RSS and will have a lower RSS in this case when compared to the non-linear model. The exact opposite is true when the true relationship is closer to non-linear than linear. In this case, the non-linear model will perform better on training data than the linear model and thus will have a lower RSS in this case.</p></li>
+</ol>
 </div>
 
 
