@@ -1,6 +1,28 @@
 # In-Class Programming Activity, Day 9
 
 Your work goes here ...
+```{r}
+poker_deck <- c(outer((10 * 2:14), 1:4, '+'))
+suits <- function(cards){
+  cards %% 10
+}
+
+ranks <- function(cards){
+  cards %/% 10
+}
+
+is_flush <- function(cards){
+  length(unique(suits(cards))) == 1
+}
+
+is_straight <- function(cards){
+  all(diff(sort(ranks(cards)))) == 1
+}
+
+is_straight_flush <- function(cards){
+  is_flush(cards) && is_straight(cards)
+  }
+```
 
 
 
