@@ -1,6 +1,28 @@
 # In-Class Programming Activity, Day 10
 
 Your work goes here ...
+```{r}
+logistic <- function(x){
+  exp(x)/(1+exp(x))
+}
+
+linear_combine <- function(data, coefs){
+  result <- 0
+  for (nm in names(coefs)) {
+    if (nm == "intercept") {
+      result <- result + coefs[[nm]]
+    } else {
+      if (!nm %in% names(data))
+        stop("Not valid.")
+      result <- result + coefs[[nm]] * data[[nm]]
+    }
+  }
+  return(result)
+}
+
+LL_logistic <- function(data, coefs, outcome){
+}
+```
 
 
 
