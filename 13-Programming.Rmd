@@ -2,6 +2,28 @@
 
 Your work goes here ...
 
+```{r}
+
+k_fold1 <- function(formula, method = lm, data = mtcars, predfun = predict, k = 10){
+  # do the calculations, 
+  sets <- (1:nrow(mtcars) %% k) + 1
+  # producing an estimate of error
+  mspe <- numeric(k)
+  for (i in 1:k){
+    mspe[i] <-
+      training <- data[sets!=i,]
+      testing <- data[sets==i,]
+      mod <- lm(formula, data = training)
+      yhat <- predict(mod, data = testing)
+      error_estimate <- sum(tesing - yhat)^2
+      
+  }
+  mean(mspe)
+  return(error_estimate)
+}
+
+
+```
 
 
 ## Test statements
