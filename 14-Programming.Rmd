@@ -3,7 +3,7 @@
 Your work goes here ...
 
 ```{r}
-#GenCont <- read.csv("http://tiny.cc/dcf/GenCont.csv")
+GenCont <- read.csv("http://tiny.cc/dcf/GenCont.csv")
 
 #training_response <- sample(GenCont$Phenotypes, size = length(GenCont)/2)
 #inds <- c(2:ncol(GenCont)
@@ -12,7 +12,6 @@ Your work goes here ...
 #testing_predictors <- sample(inds, size = length(GenCont)/2)
 #compare_ols_ridge <- function(responses, predictors, lambda=1){
   # your statements will go here
-}
 ```
 
 
