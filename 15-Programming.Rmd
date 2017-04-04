@@ -2,6 +2,16 @@
 
 Your work goes here ...
 
+```{r}
+#download.file("http://tiny.cc/dcf/mona.rda", destfile = "mona.rda")
+load("mona.rda")
+X <- t(mona) - mean(mona[])
+X_rand <- rnorm(ncol(X))
+X_corr <- X_rand*chol(var(X))
+
+beta <- c(1:191)
+```
+
 
 
 ## Test statements
