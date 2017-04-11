@@ -1,2 +1,196 @@
 # Topic 4 Exercises: Classification
+# AJ Imholte
 
+#Theory exercises
+
+4.7.1
+p(X) = (e^B0+B1*X)/(1+e^(B0+B1*x)) = e^(B0+B1*X)*(1-p(X)) = p(X)
+
+This is equivalent to the fraction p(X)/(1-p(X)) = e^(B0+B1*X)
+
+4.7.8
+In the case where the model is estimated with KNN with K = 1, the training error rate is zero. However, since the average error rate is 18% for KNN, this means that the testing error rate must be 36%. This is higher than the logistic regressions testing error rate of 30%, so we should use logistic regression in this case due to the lower testing error rate when compared to KNN when K = 1.
+
+4.7.9
+  a. What fraction of people with an odds of 0.36 of defalting on their credit card will default?
+  p(X)/(1-p(X)) = 0.37, so p(X) = 0.37/1.37 = 0.27
+  27% of people will default on their credit card payments in this scenario.
+  
+  b. Suppose that an individual has a 16% chance of defaulting on her credit card payment. What are the odds that she will default?
+  p(X) = 0.16 is given, so the fraction p(X) = p(X)/(1-p(X)) = 0.19
+  Based off this information, the odds that she will default is 19%.
+  
+  
+#Programming Exercises
+```{r error = TRUE}
+attach(Auto)
+mpg1 <- rep(0, length(mpg))
+mpg1[mpg > median(mpg)] <- 1
+Auto <- data.frame(Auto, mpg1)
+```
+
+```{r error = TRUE}
+cor(Auto[,-9])
+pairs(Auto)
+```
+
+```{r error = TRUE}
+boxplot(cylinders ~ mpg1, data = Auto, main = "Cylinders vs mpg1")
+boxplot(displacement ~ mpg1, data = Auto, main = "Displacement vs mpg1")
+boxplot(horsepower ~ mpg1, data = Auto, main = "Horsepower vs mpg1")
+boxplot(weight ~ mpg1, data = Auto, main = "Weight vs mpg1")
+boxplot(acceleration ~ mpg01, data = Auto, main = "Acceleration vs mpg1")
+boxplot(year ~ mpg1, data = Auto, main = "Year vs mpg1")
+
+
+#Based off the correlations, scatter plots, and boxplots,  it seems that mpg, cylinders, displacement, and weight are good predictors of mpg1.
+```
+c.
+```{r error = TRUE}
+training <- (year %% 2 == 0)
+Auto_training <- Auto[training, ]
+Auto_testing <- Auto[!training, ]
+mpg1_testing <- mpg1[!training]
+```
+d.
+```{r error = TRUE}
+training_lda <- lda(mpg1 ~ cylinders + weight + displacement + horsepower, data = Auto, subset = training)
+training_lda
+
+testing_lda <- predict(training_lda, Auto_testing)
+table(testing_lda$class, mpg1_testing)
+
+mean(testing_lda$class != mpg1_testing)
+```
+According to this output, there is an error rate for this model of approximately 12.63%
+
+e.
+```{r error = TRUE}
+training_qda <- qda(mpg1 ~ cylinders + weight + displacement + horsepower, data = Auto, subset = training)
+training_qda
+
+testing_qda <- predict(training_qda, Auto_testing)
+table(testing_qda$class, mpg1_testing)
+
+mean(testing_qda$class != mpg1_testing)
+```
+Based off this output, the test error rate for this model is approximately 13.19%.
+
+f.
+```{r error = TRUE}
+glm_training <- glm(mpg1 ~ cylinders + weight + displacement + horsepower, data = Auto, family = binomial, subset = training)
+summary(glm_training)
+```
+
+```{r error = TRUE}
+probabilities <- predict(glm_training, Auto_testing, type = "response")
+glm_testing <- rep(0, length(probabilities))
+glm_testing[probabilities > 0.5] <- 1
+table(glm_testing, mpg1_testing)
+
+mean(glm_testing != mpg1_testing)
+```
+The test error rate for this model is approximately 12.09%.
+
+g.
+
+```{r error = TRUE}
+training_X <- cbind(cylinders, weight, displacement, horsepower)[training, ]
+testing_X <- cbind(cylinders, weight, displacement, horsepower)[!training, ]
+training_mpg1 <- mpg1[training]
+set.seed(1)
+#knn_testing <- knn(training_X, testing_X, training_mpg1, k = 1)
+#table(testing_X, training_mpg1)
+```
+
+```{r}
+#mean(knn_testing != mpg1_testing)
+
+#knn_testing <- knn(training_X, testing_X, mpg1_training, k = 10)
+#table(knn_testing, mpg1_testing)
+```
+
+#4.7.13
+
+```{r error = TRUE}
+library(MASS)
+attach(Boston)
+crim1 <- rep(0, length(crim))
+crim1[crim > median(crim)] <- 1
+Boston <- data.frame(Boston, crim1)
+
+train <- 1:(length(crim) / 2)
+test <- (length(crim) / 2 + 1):length(crim)
+Boston_train <- Boston[train, ]
+Boston_test <- Boston[test, ]
+crim1_test <- crim01[test]
+
+train_glm <- glm(crim1 ~ . - crim1 - crim, data = Boston, family = binomial, subset = train)
+```
+
+```{r error = TRUE}
+probs <- predict(train_glm, Boston_test, type = "response")
+test_glm <- rep(0, length(probs))
+test_glm[probs > 0.5] <- 1
+table(test_glm, crim1_test)
+
+mean(test_glm != crim1_test)
+```
+Based off this output, this logistic regression model has a test error rate of approximately 18.18%.
+
+```{r error = TRUE}
+train_glm2 <- glm(crim1 ~ . - crim1 - crim - chas - nox, data = Boston, family = binomial, subset = train)
+probs3 <- predict(train_glm2, Boston_test, type = "response")
+```
+
+```{r error = TRUE}
+test_glm2 <- rep(0, length(probs3))
+test_glm2[probs3 > 0.5] <- 1
+table(test_glm2, crim1_test)
+
+mean(test_glm2 != crim1_test)
+```
+Based on this output, this logistic regression has a test error rate of 15.8%.
+
+```{r error = TRUE}
+train_lda <- lda(crim1 ~ . - crim1 - crim, data = Boston, subset = train)
+test_lda <- predict(train_lda, Boston_test)
+table(test_lda$class, crim1_test)
+
+mean(test_lda$class != crim1_test)
+```
+This LDA has a test error rate of 13.43%.
+
+```{r error = TRUE}
+train_lda2 <- lda(crim1 ~ . - crim1 - crim - chas - nox, data = Boston, subset = train)
+test_lda2 <- predict(train_lda2, Boston_test)
+table(test_lda2$class, crim1_test)
+
+mean(test_lda2$class != crim1_test)
+```
+This LDA has a test error rate of approximately 15.02%.
+
+```{r}
+train_X <- cbind(zn, indus, chas, nox, rm, age, dis, rad, tax, ptratio, black, lstat, medv)[train, ]
+test_X <- cbind(zn, indus, chas, nox, rm, age, dis, rad, tax, ptratio, black, lstat, medv)[test, ]
+train_crim1 <- crim1[train]
+set.seed(1)
+#test_knn <- knn(train_X, test_X, train_crim1, k = 1)
+#table(test_knn, crim1_test)
+
+#mean(test_knn != crim1_test)
+```
+
+```{r}
+#test_knn2 <- knn(train_X, test_X, train_crim1, k = 10)
+#table(test_knn2, crim1_test)
+
+#mean(test_knn2 != crim1_test)
+```
+
+```{r}
+#test_knn3 <- knn(train_X, test_X, train_crim1, k = 100)
+#table(test_knn3, crim1_test)
+
+#mean(test_knn3 != crim1_test)
+```
