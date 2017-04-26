@@ -1,0 +1,55 @@
+
+#Lending Club 2
+
+#Questions for Danny: Logistic regression with more than two response types, only specific categorical variables, creating subsets of data based off of categorical variables
+
+#To - Do: Confusion matrix (after logistic regression), cross validate/train & test manually -> one or the other in this case, test error rates, limitations, more figures representing the data
+
+```{r}
+load("Loans_100k.rda")
+```
+
+```{r}
+hist(Loans_100k$funded_amnt)
+hist(Loans_100k$int_rate)
+hist(Loans_100k$total_pymnt)
+```
+```{r}
+boxplot(loan_amnt ~ grade, data = Loans_100k)
+boxplot(int_rate ~ grade, data = Loans_100k)
+boxplot(total_pymnt ~ loan_status, data = Loans_100k)
+```
+
+```{r}
+a_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "A"])
+b_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "B"])
+c_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "C"])
+d_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "D"])
+e_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "E"])
+f_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "F"])
+g_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "G"])
+
+a_int_rate
+b_int_rate
+c_int_rate
+d_int_rate
+e_int_rate
+f_int_rate
+g_int_rate
+```
+
+```{r}
+library(MASS)
+mod1 <- lda(loan_status ~ loan_amnt + int_rate + grade + annual_inc + total_pymnt, data = Loans_100k)
+mod1
+```
+
+```{r}
+mod2 <- lm(int_rate ~ grade + loan_amnt + annual_inc + term, data = Loans_100k)
+summary(mod2)
+mod3 <- lm(total_pymnt ~ annual_inc + loan_amnt + grade + int_rate, data = Loans_100k)
+summary(mod3)
+mod4 <- lm(out_prncp ~ annual_inc + loan_amnt + grade + int_rate, data = Loans_100k)
+summary(mod4)
+```
+
