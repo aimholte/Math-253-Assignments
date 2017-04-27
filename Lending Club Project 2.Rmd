@@ -6,12 +6,13 @@
 ```{r}
 load("Loans_100k.rda")
 ```
-
+#Some Cool Graphs
 ```{r}
-hist(Loans_100k$funded_amnt)
+hist(Loans_100k$loan_amnt)
 hist(Loans_100k$int_rate)
 hist(Loans_100k$total_pymnt)
 ```
+#Some More Cool Graphs
 ```{r}
 boxplot(loan_amnt ~ grade, data = Loans_100k, main = "Loan Amount Based on Loan Grade")
 boxplot(int_rate ~ grade, data = Loans_100k, main = "Loan Interest Rate Based on Loan Grade")
@@ -20,20 +21,12 @@ boxplot(total_pymnt ~ grade, data = Loans_100k, main = "Total Loan Payment given
 boxplot(out_prncp ~ grade, data = Loans_100k, main = "Outstanding Principal given Loan Grade")
 boxplot(out_prncp ~ loan_status, data = Loans_100k, main = "Outstanding Principal given Loan Status")
 ```
-
+#Total Amount of Loans in Each Status Type
 ```{r}
 table(Loans_100k$loan_status)
-
-as.integer(table(Loans_100k$loan_status))
+#as.integer(table(Loans_100k$loan_status))
 ```
-
-```{r}
-unique(Loans_100k$loan_status)
-#Loans_100k$loan_status <- ifelse(Loans_100k$statsu == "My first categore", "bankrupt", "default")
-#keepers <- Loans_100k$loan_status %in% c("Late (31", "the other one")
-#data_for_modeling <- Loans_100k[keepers,]
-```
-
+#Median Interest Rates for Each Grade of Loan
 ```{r}
 a_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "A"])
 b_int_rate <- summary(Loans_100k$int_rate[Loans_100k$grade == "B"])
@@ -51,13 +44,9 @@ e_int_rate
 f_int_rate
 g_int_rate
 ```
+Loan interest rates reflect risk.
 
-```{r}
-library(MASS)
-mod1 <- lda(loan_status ~ loan_amnt + int_rate + grade + annual_inc + total_pymnt, data = Loans_100k)
-mod1
-```
-
+#Exploratory regressions
 ```{r}
 mod2 <- lm(int_rate ~ grade + loan_amnt + annual_inc + term, data = Loans_100k)
 summary(mod2)
@@ -73,32 +62,30 @@ data_for_modeling <- Loans_100k[keepers,]
 table(data_for_modeling$loan_status)
 data_for_modeling$loan_status[data_for_modeling$loan_status == "Charged Off"] <- as.numeric(0)
 data_for_modeling$loan_status[data_for_modeling$loan_status == "Fully Paid"] <- as.numeric(1)
-unique(data_for_modeling$loan_status)
-
+#unique(data_for_modeling$loan_status)
 ```
+#Our model on the whole dataset
 ```{r}
-model_formula <- as.numeric(loan_status) ~ loan_amnt + int_rate + grade + annual_inc + total_pymnt
+model_formula <- as.numeric(loan_status) ~ loan_amnt + int_rate + grade + annual_inc + grade + total_pymnt
 glm_mod <- glm(model_formula, data = data_for_modeling, family = binomial)
 summary(glm_mod)
 ```
 ```{r}
 train <- 1:(nrow(data_for_modeling) / 2)
-
-
 training_data <- data_for_modeling[train,]
 testing_data <- data_for_modeling[-train,]
 ```
-
+#Model on Training Data
 ```{r}
 glm_mod_training <- glm(model_formula, data = training_data, family = binomial)
-
 summary(glm_mod_training)
 ```
+#Confusion Matrix
 ```{r}
 probability <- predict(glm_mod_training, testing_data, type = "response")
 table(testing_data$loan_status, probability>.95)
-# wrong mean(testing_data$loan_status == (probability > .5))
 ```
+#Specificity, Sensitivity, and Test Error Rate
 ```{r}
 test_error_rate <- (1792+70)/(2532+70+1792+9798)
 specificity <- 2532/(2532+70) #What percentage of the people that the model predicts would default that actually defaulted
@@ -107,19 +94,19 @@ specificity
 sensitivity
 test_error_rate
 ```
+#Loss Analysis
 ```{r}
 payments <- median(data_for_modeling$total_rec_prncp)+median(data_for_modeling$total_rec_int)
 amounts <- median(data_for_modeling$loan_amnt)
-payments/amounts
 rate <- median(data_for_modeling$int_rate)
 sd_payments <- sd(data_for_modeling$total_rec_prncp+data_for_modeling$total_rec_int)
 sd_amounts <- sd(data_for_modeling$loan_amnt)
-(payments * .94)*-.07 #The average loss of a loan, assuming that half of interest payments are paid and 95% of the principal
-(payments * .94)*-.07 * 70 #Expected value of defaults
-amounts*(1+rate/100) - amounts
-(amounts*(1+rate/100) - amounts)* (9798+70)
 sd_payments
 sd_payments/sd_amounts #Variance is greater on payments than amounts
-
+payments/amounts #What fraction of loan amounts are paid
+(payments * .94)*-.07 #The average loss of a loan, assuming that half of interest payments are paid and 95% of the principal
+(payments * .94)*-.07 * 70 #Expected value of defaults
+amounts*(1+rate/100) - amounts #The average amount we will make per loan
+(amounts*(1+rate/100) - amounts)* (9798+70) #The expected amount we will make in total if we loan to everyone
 ```
 
