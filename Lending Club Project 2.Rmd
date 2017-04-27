@@ -1,9 +1,7 @@
 
 #Lending Club 2
 
-#Questions for Danny: Logistic regression with more than two response types, only specific categorical variables, creating subsets of data based off of categorical variables
-
-#To - Do: Confusion matrix (after logistic regression), cross validate/train & test manually -> one or the other in this case, test error rates, limitations, more figures representing the data
+#What factors predict the risk of default? How can we create models to better loan to indivudals? What are some of the fundamentals of personal loans?
 
 ```{r}
 load("Loans_100k.rda")
@@ -15,9 +13,25 @@ hist(Loans_100k$int_rate)
 hist(Loans_100k$total_pymnt)
 ```
 ```{r}
-boxplot(loan_amnt ~ grade, data = Loans_100k)
-boxplot(int_rate ~ grade, data = Loans_100k)
-boxplot(total_pymnt ~ loan_status, data = Loans_100k)
+boxplot(loan_amnt ~ grade, data = Loans_100k, main = "Loan Amount Based on Loan Grade")
+boxplot(int_rate ~ grade, data = Loans_100k, main = "Loan Interest Rate Based on Loan Grade")
+boxplot(total_pymnt ~ loan_status, data = Loans_100k, main = "Total Loan Payment given Loan Status")
+boxplot(total_pymnt ~ grade, data = Loans_100k, main = "Total Loan Payment given Loan Grade")
+boxplot(out_prncp ~ grade, data = Loans_100k, main = "Outstanding Principal given Loan Grade")
+boxplot(out_prncp ~ loan_status, data = Loans_100k, main = "Outstanding Principal given Loan Status")
+```
+
+```{r}
+table(Loans_100k$loan_status)
+
+as.integer(table(Loans_100k$loan_status))
+```
+
+```{r}
+unique(Loans_100k$loan_status)
+#Loans_100k$loan_status <- ifelse(Loans_100k$statsu == "My first categore", "bankrupt", "default")
+#keepers <- Loans_100k$loan_status %in% c("Late (31", "the other one")
+#data_for_modeling <- Loans_100k[keepers,]
 ```
 
 ```{r}
@@ -51,5 +65,61 @@ mod3 <- lm(total_pymnt ~ annual_inc + loan_amnt + grade + int_rate, data = Loans
 summary(mod3)
 mod4 <- lm(out_prncp ~ annual_inc + loan_amnt + grade + int_rate, data = Loans_100k)
 summary(mod4)
+```
+
+```{r}
+keepers <- Loans_100k$loan_status %in% c("Charged Off", "Fully Paid")
+data_for_modeling <- Loans_100k[keepers,]
+table(data_for_modeling$loan_status)
+data_for_modeling$loan_status[data_for_modeling$loan_status == "Charged Off"] <- as.numeric(0)
+data_for_modeling$loan_status[data_for_modeling$loan_status == "Fully Paid"] <- as.numeric(1)
+unique(data_for_modeling$loan_status)
+
+```
+```{r}
+model_formula <- as.numeric(loan_status) ~ loan_amnt + int_rate + grade + annual_inc + total_pymnt
+glm_mod <- glm(model_formula, data = data_for_modeling, family = binomial)
+summary(glm_mod)
+```
+```{r}
+train <- 1:(nrow(data_for_modeling) / 2)
+
+
+training_data <- data_for_modeling[train,]
+testing_data <- data_for_modeling[-train,]
+```
+
+```{r}
+glm_mod_training <- glm(model_formula, data = training_data, family = binomial)
+
+summary(glm_mod_training)
+```
+```{r}
+probability <- predict(glm_mod_training, testing_data, type = "response")
+table(testing_data$loan_status, probability>.95)
+# wrong mean(testing_data$loan_status == (probability > .5))
+```
+```{r}
+test_error_rate <- (1792+70)/(2532+70+1792+9798)
+specificity <- 2532/(2532+70) #What percentage of the people that the model predicts would default that actually defaulted
+sensitivity <- 9798/(1792+9798) #What percentage of the people that would have fully paid that the model predicts would have paid
+specificity
+sensitivity
+test_error_rate
+```
+```{r}
+payments <- median(data_for_modeling$total_rec_prncp)+median(data_for_modeling$total_rec_int)
+amounts <- median(data_for_modeling$loan_amnt)
+payments/amounts
+rate <- median(data_for_modeling$int_rate)
+sd_payments <- sd(data_for_modeling$total_rec_prncp+data_for_modeling$total_rec_int)
+sd_amounts <- sd(data_for_modeling$loan_amnt)
+(payments * .94)*-.07 #The average loss of a loan, assuming that half of interest payments are paid and 95% of the principal
+(payments * .94)*-.07 * 70 #Expected value of defaults
+amounts*(1+rate/100) - amounts
+(amounts*(1+rate/100) - amounts)* (9798+70)
+sd_payments
+sd_payments/sd_amounts #Variance is greater on payments than amounts
+
 ```
 
