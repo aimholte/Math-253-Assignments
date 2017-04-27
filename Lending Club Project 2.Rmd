@@ -1,5 +1,7 @@
 
-#Lending Club 2
+#Lending Club
+
+#A.J. Imholte and Connor Doak
 
 #What factors predict the risk of default? How can we create models to better loan to indivudals? What are some of the fundamentals of personal loans?
 
@@ -12,6 +14,7 @@ hist(Loans_100k$loan_amnt)
 hist(Loans_100k$int_rate)
 hist(Loans_100k$total_pymnt)
 ```
+
 #Some More Cool Graphs
 ```{r}
 boxplot(loan_amnt ~ grade, data = Loans_100k, main = "Loan Amount Based on Loan Grade")
