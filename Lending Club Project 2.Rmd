@@ -91,8 +91,10 @@ table(testing_data$loan_status, probability>.95)
 #Specificity, Sensitivity, and Test Error Rate
 ```{r}
 test_error_rate <- (1792+70)/(2532+70+1792+9798)
-specificity <- 2532/(2532+70) #What percentage of the people that the model predicts would default that actually defaulted
-sensitivity <- 9798/(1792+9798) #What percentage of the people that would have fully paid that the model predicts would have paid
+specificity <- 2532/(2532+70)
+#What percentage of the people that the model predicts would default that actually defaulted
+sensitivity <- 9798/(1792+9798)
+#What percentage of the people that would have fully paid that the model predicts would have paid
 specificity
 sensitivity
 test_error_rate
@@ -105,11 +107,17 @@ rate <- median(data_for_modeling$int_rate)
 sd_payments <- sd(data_for_modeling$total_rec_prncp+data_for_modeling$total_rec_int)
 sd_amounts <- sd(data_for_modeling$loan_amnt)
 sd_payments
-sd_payments/sd_amounts #Variance is greater on payments than amounts
-payments/amounts #What fraction of loan amounts are paid
-(payments * .94)*-.07 #The average loss of a loan, assuming that half of interest payments are paid and 95% of the principal
-(payments * .94)*-.07 * 70 #Expected value of defaults
-amounts*(1+rate/100) - amounts #The average amount we will make per loan
-(amounts*(1+rate/100) - amounts)* (9798+70) #The expected amount we will make in total if we loan to everyone
+sd_payments/sd_amounts
+#Variance is greater on payments than amounts
+payments/amounts
+#What fraction of loan amounts are paid
+(payments * .94)*-.07
+#The average loss of a loan, assuming that half of interest payments are paid and 95% of the principal
+(payments * .94)*-.07 * 70
+#Expected value of defaults
+amounts*(1+rate/100) - amounts
+#The average amount we will make per loan
+(amounts*(1+rate/100) - amounts)* (9798+70)
+#The expected amount we will make in total if we loan to everyone
 ```
 

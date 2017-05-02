@@ -1,2 +1,149 @@
 # Topic 6 Exercises: Selecting Model Terms
 
+# Theory Questions
+
+6.8.1
+
+a. Which of the three models with K predicts has the smallest training RSS? 
+
+The model with K predictors is the model with the smallest RSS among all the possible models with K predictors. When doing stepwise selection, the model with K predictors is the model with the smallest RSS among the P - K models. When performing backward stepwise selection, the model with K predictors in the model with the smallest RSS among the K models which contains all but one of the predictors. So, the model with K predictors has the smallest training RSS is the one obtained from the best subset selection as it is the one selected among all K predictors models.
+
+b. Which of the three models with K predictors has the smallest test RSS?
+
+It depends. The best subset selection may have the smallest test RSS because it takes into accountmore models than the other methods, but other methods might also picka a model with the smallest test RSS by chance.
+
+c.
+
+  i. The predictors in the K-variable model identified by forward stepwise are a subset of the predictors in the (K+1) - variable model identified by forward stepwise selection
+  
+  This is true. The model with (K+1) predictors is obtained by adding the predictors in the model with K predictors with one more predictor.
+  
+  ii. The predictors in the K-Variable model identified by backward stepwise are a subset of the predictors in the (K+1) - variable model identified by backward stepwise slection.
+  
+  Also true. The model with K predictors is otained by removing one predictor from the model with (K+1) predictors
+  
+  iii. The predictors in the k-variable model identified by backward stepwise are a subset of the predictors in (K+1)-variable model identified by forward stepwse selection.
+  
+  Ths is false...There is no connection between the models obtained from the methods of forward selection and backward selection.
+  
+  iv. The predictors in the K-variable model identified by forward stepwise are a subset of the predictors in the (K+1)-variable model identified by backward stepwise selection.
+  
+  This is also false for the same reason as iii.
+  
+  v. The predictors in the K-variable model identified by the best subset are a subset of the predictors in the (K+1)-variable model identified by best subset selection.
+  
+  This is false too. The model with (K+1) predictors is obtained by selecting amongst all possible models with (K+1) predictors. Thus, it does not necessarily contain the predictors selected for the K-variable model.
+  
+6.8.2
+
+  a. The lasso, relative to least squares is:
+  
+  Less flexible and will give better prediction accuracy when its increase in bias is less than its decrease in variance.
+  
+  b. Ridge regression relative to least squares:
+  
+  Similiar to lasso, ridge regression is also less flexible and will give improed prediction accuracy when its increase in bias is less than its decrease in variance.
+  
+  c. Non-linear methods relative to least squares:
+  
+  Non-linear methods are - by definition - are more flexible and will give improved prediction accuracy when their increase in variance are less than their decrease in bias.
+  
+#Programming Exercises
+
+6.8.9
+
+a.
+```{r}
+library(ISLR)
+data(College)
+set.seed(11)
+train = sample(1:dim(College)[1], dim(College)[1]/2)
+test <- -train
+College_training <- College[train, ]
+College_testing <- College[test, ]
+```
+b.
+```{r}
+fitting_lm <- lm(Apps ~., data = College_training)
+testing_lm <- predict(fitting_lm, College_testing)
+mean((testing_lm - College_testing$Apps)^2)
+```
+The test mean-squared error is 1,536,442.
+
+c.
+```{r}
+#install.packages("glmnet")
+library(glmnet)
+training_matrix <- model.matrix(Apps ~ ., data = College_training)
+testing_matrix <- model.matrix(Apps ~ ., data = College_testing)
+grid <- 10^seq(4, -2, length = 100)
+fit_ridge <- glmnet(training_matrix, College_training$Apps, alpha = 0, lambda = grid, thresh = 1e-12)
+cv_ridge <- cv.glmnet(training_matrix, College_training$Apps, alpha= 0, lambda = grid, thresh = 1e-12)
+best_lambda <- cv_ridge$lambda.min
+best_lambda
+```
+```{r}
+ridge_test <- predict(fit_ridge, s = best_lambda, newx = testing_matrix)
+mean((ridge_test - College_testing$Apps)^2)
+```
+As you can see, the testing mean-squared error is higher for ridge regression than for OLS.
+
+d.
+```{r}
+lasso_train <- glmnet(training_matrix, College_training$Apps, alpha = 1, lambda = grid, thresh = 1e-12)
+lasso_cv <- cv.glmnet(training_matrix, College_training$Apps, alpha = 1, lambda = grid, thresh = 1e-12)
+best_lamda_lasso <- lasso_cv$lambda.min
+best_lamda_lasso
+```
+```{r}
+test_lasso <- predict(lasso_train, s = best_lamda_lasso, newx = testing_matrix)
+mean((test_lasso - College_testing$Apps)^2)
+```
+The testing mean-squared error is also higher for ridge regression when compared to OLS's MSE.
+```{r}
+predict(lasso_train, s = best_lamda_lasso, type = "coefficients")
+```
+e.
+```{r}
+#install.packages("pls")
+library(pls)
+```
+```{r}
+pcr_fitting <- pcr(Apps ~ ., data = College_training, scale = TRUE, validation = "CV")
+validationplot(pcr_fitting, val.type = "MSEP")
+```
+```{r}
+pcr_testing <- predict(pcr_fitting, College_testing, ncomp = 10)
+mean((pcr_testing - College_testing$Apps)^2)
+```
+Again - the testing mean-squared error is also higher for PCR than for OLS!
+
+f.
+```{r}
+pls_fitting <- plsr(Apps ~ ., data = College_training, scale = TRUE, validation = "CV")
+validationplot(pls_fitting, val.type = "MSEP")
+```
+```{r}
+pls_testing <- predict(pls_fitting, College_testing, ncomp = 10)
+mean((pls_testing - College_testing$Apps)^2)
+```
+In this case, the testing mean-squared error is lower for PLS than for OLS.
+
+g. 
+```{r}
+testing_average <- mean(College_testing$Apps)
+lm_r2 <- 1 - mean((testing_lm - College_testing$Apps)^2) / mean((testing_average - College_testing$Apps)^2)
+ridge_r2 <- 1 - mean((ridge_test - College_testing$Apps)^2) / mean((testing_average - College_testing$Apps)^2)
+lasso_r2 <- 1 - mean((test_lasso - College_testing$Apps)^2) / mean((testing_average - College_testing$Apps)^2)
+pcr_r2 <- 1 - mean((pcr_testing - College_testing$Apps)^2) / mean((testing_average - College_testing$Apps)^2)
+pls_r2 <- 1 - mean((pls_testing - College_testing$Apps)^2) / mean((testing_average - College_testing$Apps)^2)
+```
+
+```{r}
+lm_r2
+ridge_r2
+lasso_r2
+pcr_r2
+pls_r2
+```
+The test R^2 for each model is close to .9 for all models except pcr. With this information, we can conclude that all the models used except pcr predict college applications with a high degree of accuracy.
