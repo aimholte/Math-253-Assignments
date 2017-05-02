@@ -1,2 +1,90 @@
 # Topic 7 Exercises: Nonlinear regression
 
+# AJ Imholte
+
+#Theory Questions
+
+7.9.3 -
+```{r}
+x = -2:2
+y = 1 + x + -2 * (x-1)^2 * I(x>1)
+plot(x,y)
+```
+The curve is linear between -2 and 1 (y = 1 + x) an quadratic between 1 and 2 (y = 1 + x - 2(x-1)^2).
+
+7.9.4-
+```{r}
+x = -2:2
+y = c(1 + 0 + 0, #x=2
+      1 + 0 + 0, #x=-1
+      1 + 1 + 0, #x=0
+      1 + (1-0) + 0, #x=1
+      1 + (1-1) + 0 #x=2)
+)
+plot(x,y)
+```
+The curve is constance between -2 and 0 (y = 1) and constant between 0 and 1 (y = 2) and linear between 1 and 2 (y = 3 - x).
+
+7.9.5-
+
+a. As lambda approaches infinity, the smoothing spline \hat({g_2}) will mostlikely have the smaller training RSS because it will be a higher-order polynomial due to the power of the penalty term. This will result in the model being more flexible.
+
+b. As lambda approaches infinity, we would expect that \hat({g_1}) would have the smaller test RSS. This is due to \hat({g_2})'s degree of flexibility, which could possibly lead to overfitting.
+
+c. When lambda is equal to zero, \hat({g_1}) and \hat({g_2}) are equivalent, so they will both have the same training and test RSS.
+
+#Applied
+
+7.9.11
+
+a.
+```{r}
+set.seed(1)
+x1 = rnorm(100)
+x2 = rnorm(100)
+e = rnorm(100, sd = 0.1)
+Y = -5 + 1.5 * x1 + -2 * x2 + e
+```
+
+b.
+```{r}
+beta_0 = rep(NA, 1000)
+beta_1 = rep(NA, 1000)
+beta_2 = rep(NA, 1000)
+beta_1[1] = 5
+```
+
+c.
+```{r}
+for (i in 1:1000) {
+  a = Y - beta_1[i] * x1
+  beta_2[i] = lm(a ~ x2)$coef[2]
+  a = Y - beta_2[i] * x2
+  lm_fit = lm(a ~ x1)
+  if (i < 1000) {
+    beta_1[i + 1] = lm_fit$coef[2]
+  }
+  beta_0[i] = lm_fit$coef[1]
+}
+plot(1:1000, beta_0, type = "l", xlab = "Iteration", ylab = "betas", ylim = c(-5, 6), col = "blue")
+lines(1:1000, beta_1, col = "red")
+lines(1:1000, beta_2, col = "purple")
+legend("center", c("beta_0", "beta_1", "beta_2"), lty = 1, col = c("blue", "red", "purple"))
+```
+Coefficients quickly attain their least square values as the number of interations increase
+
+f.
+```{r}
+lm_fit = lm(Y ~ x1 + x2)
+plot(1:1000, beta_0, type = "l", xlab = "Iteration", ylab = "Betas", ylim = c(-6, 6), col = "blue")
+lines(1:1000, beta_1, col = "red")
+lines(1:1000, beta_2, col = "purple")
+abline(h = lm_fit$coef[1], lty = "dashed", lwd = 3, col = rgb(0,0,0, alpha = 0.4))
+abline(h = lm_fit$coef[2], lty = "dashed", lwd = 3, col = rgb(0,0,0, alpha = 0.4))
+abline(h = lm_fit$coef[3], lty = "dashed", lwd = 3, col = rgb(0,0,0, alpha = 0.4))
+legend("center", c("beta_0", "beta_1", "beta_2", "multiple regression"), lty = c(1, 1, 1, 2), col = c("blue", "red", "purple"))
+```
+The dotted lines on the graph above demonstrate that the multiple regression coefficients match exactly with the coefficients obtained using backfitting.
+
+g. Based on the graphs above, when the relationship between Y and X's is linear, one iteration is enough to attain an accurate approximation of true regression coefficients.
+
