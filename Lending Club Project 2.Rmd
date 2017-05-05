@@ -95,10 +95,11 @@ specificity <- 2532/(2532+70)
 #What percentage of the people that the model predicts would default that actually defaulted
 sensitivity <- 9798/(1792+9798)
 #What percentage of the people that would have fully paid that the model predicts would have paid
+test_error_rate
 specificity
 sensitivity
-test_error_rate
 ```
+
 #Loss Analysis
 ```{r}
 payments <- median(data_for_modeling$total_rec_prncp)+median(data_for_modeling$total_rec_int)
@@ -113,11 +114,71 @@ payments/amounts
 #What fraction of loan amounts are paid
 (payments * .94)*-.07
 #The average loss of a loan, assuming that half of interest payments are paid and 95% of the principal
-(payments * .94)*-.07 * 70
-#Expected value of defaults
 amounts*(1+rate/100) - amounts
 #The average amount we will make per loan
-(amounts*(1+rate/100) - amounts)* (9798+70)
+```
+
+```{r}
+defaults <- (payments * .94)*-.07 * 70
+#Expected value of defaults
+expected_payment <- (amounts*(1+rate/100) - amounts)* (9798+70)
 #The expected amount we will make in total if we loan to everyone
+actual_payment <- expected_payment - defaults
+actual_payment
+```
+
+#Another Confusion Matrix
+```{r}
+library(MASS)
+lda_fit <- lda(model_formula, data = training_data)
+lda_test <- predict(lda_fit, testing_data, type = "response")
+table(lda_test$class,testing_data$loan_status)
+```
+
+#Sensitivity, Specificity, and Test Error Rate
+```{r}
+test_error_rate <- (891+24)/(1711+24+891+11566)
+specificity <- 1711/(1711+24)
+sensitivity <- 11566/(11566+891)
+test_error_rate
+specificity
+sensitivity
+```
+
+#Risk Analysis
+```{r}
+defaults <- (payments * .94)*-.07 * 24
+#Expected value of defaults
+expected_payment <- (amounts*(1+rate/100) - amounts)* (11566+24)
+#The expected amount we will make in total if we loan to everyone
+actual_payment <- expected_payment - defaults
+actual_payment
+```
+
+#QDA Confusion Matrix
+```{r}
+library(MASS)
+qda_fit <- qda(model_formula, data = testing_data)
+qda_test <- predict(qda_fit, testing_data, type = "response")
+table(qda_test$class, testing_data$loan_status)
+```
+
+#Sensitivity, Specificity, and Test Error Rate
+```{r}
+test_error_rate <- (553+466)/(2049+466+553+11124)
+specificity <- 2049/(2049+466)
+sensitivity <- 11124/(11124+553)
+test_error_rate
+specificity
+sensitivity
+```
+#Risk Analysis
+```{r}
+defaults <- (payments * .94)*-.07 * 466
+#Expected value of defaults
+expected_payment <- (amounts*(1+rate/100) - amounts)* (466 + 11124)
+#The expected amount we will make in total if we loan to everyone
+actual_payment <- expected_payment - defaults
+actual_payment
 ```
 
