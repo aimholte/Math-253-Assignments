@@ -389,7 +389,7 @@ testing_data &lt;- data_for_modeling[-train,]</code></pre>
 <div id="confusion-matrix" class="section level1">
 <h1>Confusion Matrix</h1>
 <pre class="r"><code>probability &lt;- predict(glm_mod_training, testing_data, type = &quot;response&quot;)
-table(testing_data$loan_status, probability&gt;.95)</code></pre>
+table(testing_data$loan_status, probability &gt; .95)</code></pre>
 <pre><code>##    
 ##     FALSE TRUE
 ##   0  2532   70
@@ -437,72 +437,78 @@ expected_payment &lt;- (amounts*(1+rate/100) - amounts)* (9798+70)
 actual_payment &lt;- expected_payment - defaults
 actual_payment</code></pre>
 <pre><code>## [1] 16121138</code></pre>
+<pre class="r"><code>defaults</code></pre>
+<pre><code>## [1] -52086.54</code></pre>
 </div>
 <div id="another-confusion-matrix" class="section level1">
 <h1>Another Confusion Matrix</h1>
 <pre class="r"><code>library(MASS)
 lda_fit &lt;- lda(model_formula, data = training_data)
-lda_test &lt;- predict(lda_fit, testing_data, type = &quot;response&quot;)
-table(lda_test$class,testing_data$loan_status)</code></pre>
-<pre><code>##    
+lda_test &lt;- predict(lda_fit, data = testing_data)$class
+table(testing_data$loan_status, lda_test)</code></pre>
+<pre><code>##    lda_test
 ##         0     1
-##   0  1711    24
-##   1   891 11566</code></pre>
+##   0   302  2300
+##   1  1376 10214</code></pre>
 </div>
 <div id="sensitivity-specificity-and-test-error-rate" class="section level1">
 <h1>Sensitivity, Specificity, and Test Error Rate</h1>
-<pre class="r"><code>test_error_rate &lt;- (891+24)/(1711+24+891+11566)
-specificity &lt;- 1711/(1711+24)
-sensitivity &lt;- 11566/(11566+891)
+<pre class="r"><code>test_error_rate &lt;- (1376+2300)/(302+2300+1376+10214)
+specificity &lt;- 302/(302+2300)
+sensitivity &lt;- 10214/(10214+1376)
 test_error_rate</code></pre>
-<pre><code>## [1] 0.06447294</code></pre>
+<pre><code>## [1] 0.2590192</code></pre>
 <pre class="r"><code>specificity</code></pre>
-<pre><code>## [1] 0.9861671</code></pre>
+<pre><code>## [1] 0.1160646</code></pre>
 <pre class="r"><code>sensitivity</code></pre>
-<pre><code>## [1] 0.928474</code></pre>
+<pre><code>## [1] 0.881277</code></pre>
 </div>
 <div id="risk-analysis" class="section level1">
 <h1>Risk Analysis</h1>
-<pre class="r"><code>defaults &lt;- (payments * .94)*-.07 * 24
+<pre class="r"><code>defaults &lt;- (payments * .94)*-.07 * 2300
 #Expected value of defaults
-expected_payment &lt;- (amounts*(1+rate/100) - amounts)* (11566+24)
+expected_payment &lt;- (amounts*(1+rate/100) - amounts)* (10214 + 2300)
 #The expected amount we will make in total if we loan to everyone
 actual_payment &lt;- expected_payment - defaults
 actual_payment</code></pre>
-<pre><code>## [1] 18891014</code></pre>
+<pre><code>## [1] 22089212</code></pre>
+<pre class="r"><code>defaults</code></pre>
+<pre><code>## [1] -1711415</code></pre>
 </div>
 <div id="qda-confusion-matrix" class="section level1">
 <h1>QDA Confusion Matrix</h1>
 <pre class="r"><code>library(MASS)
-qda_fit &lt;- qda(model_formula, data = testing_data)
-qda_test &lt;- predict(qda_fit, testing_data, type = &quot;response&quot;)
-table(qda_test$class, testing_data$loan_status)</code></pre>
-<pre><code>##    
-##         0     1
-##   0  2049   466
-##   1   553 11124</code></pre>
+qda_fit &lt;- qda(model_formula, data = training_data)
+qda_test &lt;- predict(qda_fit, data = testing_data)$class
+table(testing_data$loan_status, qda_test)</code></pre>
+<pre><code>##    qda_test
+##        0    1
+##   0  445 2157
+##   1 1987 9603</code></pre>
 </div>
 <div id="sensitivity-specificity-and-test-error-rate-1" class="section level1">
 <h1>Sensitivity, Specificity, and Test Error Rate</h1>
-<pre class="r"><code>test_error_rate &lt;- (553+466)/(2049+466+553+11124)
-specificity &lt;- 2049/(2049+466)
-sensitivity &lt;- 11124/(11124+553)
+<pre class="r"><code>test_error_rate &lt;- (1987+2157)/(445+2157+1987+9603)
+specificity &lt;- 445/(2157+445)
+sensitivity &lt;- 9603/(1987+9603)
 test_error_rate</code></pre>
-<pre><code>## [1] 0.07180101</code></pre>
+<pre><code>## [1] 0.2919955</code></pre>
 <pre class="r"><code>specificity</code></pre>
-<pre><code>## [1] 0.8147117</code></pre>
+<pre><code>## [1] 0.1710223</code></pre>
 <pre class="r"><code>sensitivity</code></pre>
-<pre><code>## [1] 0.9526419</code></pre>
+<pre><code>## [1] 0.8285591</code></pre>
 </div>
 <div id="risk-analysis-1" class="section level1">
 <h1>Risk Analysis</h1>
-<pre class="r"><code>defaults &lt;- (payments * .94)*-.07 * 466
+<pre class="r"><code>defaults &lt;- (payments * .94)*-.07 * 2157
 #Expected value of defaults
-expected_payment &lt;- (amounts*(1+rate/100) - amounts)* (466 + 11124)
+expected_payment &lt;- (amounts*(1+rate/100) - amounts)* (9603 + 2157)
 #The expected amount we will make in total if we loan to everyone
 actual_payment &lt;- expected_payment - defaults
 actual_payment</code></pre>
-<pre><code>## [1] 19219904</code></pre>
+<pre><code>## [1] 20754993</code></pre>
+<pre class="r"><code>defaults</code></pre>
+<pre><code>## [1] -1605009</code></pre>
 </div>
 
 
