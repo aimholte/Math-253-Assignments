@@ -140,8 +140,19 @@ linear_combine &lt;- function(data, coefs){
   return(result)
 }
 
-LL_logistic &lt;- function(data, coefs, outcome){
-}</code></pre>
+LL_logistic &lt;- function(data, coefs){
+  p_i &lt;- logistic(linear_combine(data,coefs))
+  for (i in i:nrow(data)) {
+    likelihood &lt;- ifelse(p_i = p_i, likelihood = 1-p_i)
+  }
+  sum_likelihoods &lt;- sum_likelihoods + likelihood
+}
+
+#LL_logistic(data=Default, 
+#            coefs = c(intercept = 1, income = -0.0001), 
+#            outcome = Default$default == &quot;Yes&quot;)
+
+#optim(LL_logistic(Default, coefs = c(intercept = 1, income = -.0001)))</code></pre>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>
 <pre class="r"><code>scoreActivity::score253(10)</code></pre>

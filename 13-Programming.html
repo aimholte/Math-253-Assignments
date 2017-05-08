@@ -130,10 +130,10 @@ $(document).ready(function () {
   for (i in 1:k){
     mspe[i] &lt;-
       training &lt;- data[sets!=i,]
-      testing &lt;- data[sets==i,]
+      For_Testing &lt;- data[sets==i,]
       mod &lt;- lm(formula, data = training)
-      yhat &lt;- predict(mod, data = testing)
-      error_estimate &lt;- sum(tesing - yhat)^2
+      yhat &lt;- predict(mod, data = For_Testing)
+      error_estimate &lt;- sum(For_Testing - yhat)^2
       
   }
   mean(mspe)
@@ -154,7 +154,7 @@ $(document).ready(function () {
 ## passed: &quot;method&quot; %in% names(formals(k_fold1))
 ## passed: &quot;data&quot; %in% names(formals(k_fold1))
 ## ERROR when running  check(about(8, pm = 3), k_fold1(), pts = 2)
-## FAILED: &quot;For_Testing&quot; %in% all.names(body(k_fold1))
+## passed: &quot;For_Testing&quot; %in% all.names(body(k_fold1))
 ## ERROR when running  check(TRUE, &quot;predfun&quot; %in% all.names(body(k_fold)))
 ## ERROR when running  check(TRUE, &quot;method&quot; %in% all.names(body(k_fold)))
 ## ERROR when running  check(about(24, pm = 4), k_fold(wage ~ age + sex, data = mosaicData::CPS85,</code></pre>

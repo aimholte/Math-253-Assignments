@@ -2,7 +2,52 @@
 
 Your work goes here ...
 
+```{r}
+n_cases <- 10000
+red_mean <- c(1,0)
+green_mean <- c(0,-1)
+blue_mean <- c(-1,1)
+covar_red <- matrix(c(3,-1.7,-1.7,1), nrow = 2)
+covar_blue <- matrix(c(2,1.5,1.5,3), nrow = 2)
+```
 
+```{r}
+One <- matrix(c(n_cases, rnorm(n_cases, mean = 0, sd = 1), rnorm(n_cases, mean = 0, sd = 1)), ncol = 3)
+Two <- matrix(c(n_cases, rnorm(n_cases, mean = 0, sd = 1), rnorm(n_cases, mean = 0, sd = 1)), ncol = 3)
+Three <- matrix(c(n_cases, rnorm(n_cases, mean = 0, sd = 1),  rnorm(n_cases, mean = 0, sd = 1)), ncol = 3)
+```
+
+```{r}
+Red <- chol(covar_red) * One[2,2]
+Green <- chol(covar_red) * Two[2,2]
+Blue <- chol(covar_blue) * Three[2,2]
+```
+
+```{r}
+Red <- outer(red_mean, Red)
+Green <- outer(green_mean, Green)
+Blue <- outer(blue_mean, Blue)
+```
+
+```{r}
+#Red <- data.frame(x, y, class = "red", stringsAsFactors = FALSE)
+#Blue <- data.frame(x, y, class = "blue", stringsAsFactors = FALSE)
+#Green <- data.frame(x, y, class = "green", stringsAsFactors = FALSE)
+```
+```{r}
+Same_sigma <- rbind(Red, Green)
+Different_sigma <- rbind(Red, Blue)
+```
+
+```{r}
+library(MASS)
+#mod_LDA_one <- lda(class ~ x + y, data = Same_sigma)
+#test_LDA_one <- predict(mod_LDA_one, newdata = Same_sigma)
+#table(Same_sigma$class, test_LDA_one$class)
+#mod_QDA_one <- qda(class ~ x + y, data = Same_sigma)
+#test_QDA_one <- qda(mod_LDA_one, newdata = Same_sigma)
+#table(Same_sigma$class, test_QDA_one$class)
+```
 
 ## Test statements
 

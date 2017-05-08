@@ -122,14 +122,39 @@ $(document).ready(function () {
 <div id="in-class-programming-activity-day-3" class="section level1">
 <h1>In-Class Programming Activity, Day 3</h1>
 <p>Your work goes here …</p>
-<pre class="r"><code>#Task 1
-data(College, package = &quot;ISLR&quot;)
-
-#Task 2
-Yield &lt;- College[&quot;Enroll&quot;]/College[&quot;Accept&quot;]
-
-#Task 3
-all_indices &lt;- 1:nrow(College)</code></pre>
+</div>
+<div id="task-1" class="section level1">
+<h1>Task 1</h1>
+<pre class="r"><code>data(College, package = &quot;ISLR&quot;)</code></pre>
+</div>
+<div id="task-2" class="section level1">
+<h1>Task 2</h1>
+<pre class="r"><code>#Yield &lt;- College[&quot;Enroll&quot;]/College[&quot;Accept&quot;]
+College$Yield &lt;- College$Enroll / College$Accept</code></pre>
+</div>
+<div id="task-3" class="section level1">
+<h1>Task 3</h1>
+<pre class="r"><code>all_indices &lt;- 1:nrow(College)
+train_indices &lt;- sample(all_indices, 200, replace = TRUE)
+test_indices &lt;- setdiff(all_indices, train_indices)
+Train_data &lt;- College[train_indices, ]
+Test_data &lt;- College[test_indices, ]</code></pre>
+</div>
+<div id="task-4" class="section level1">
+<h1>Task 4</h1>
+<pre class="r"><code>Yield_mod1 &lt;- lm(Yield ~ Top10perc + Outstate + Expend, data = Train_data)</code></pre>
+<div id="task-5" class="section level2">
+<h2>Task 5</h2>
+<pre class="r"><code>Y_train &lt;- Train_data$Yield
+fhat_train &lt;- predict(Yield_mod1, newdata = Train_data)
+MSE_train &lt;- mean((fhat_train - Y_train)^2)</code></pre>
+</div>
+<div id="task-6" class="section level2">
+<h2>Task 6</h2>
+<pre class="r"><code>Y_test &lt;- Test_data$Yield
+fhat_test &lt;- predict(Yield_mod1, newdata = Test_data)
+MSE_test &lt;- mean((fhat_test - Y_test)^2)</code></pre>
+</div>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>
 <pre class="r"><code>scoreActivity::score253(3)</code></pre>
@@ -138,15 +163,15 @@ all_indices &lt;- 1:nrow(College)</code></pre>
 <pre><code>## Loading required package: scoreActivity</code></pre>
 <pre><code>## Loading required package: lazyeval</code></pre>
 <pre><code>## FAILED: &quot;package:ISLR&quot; %in% search()
-## FAILED: &quot;Yield&quot; %in% names(College)
-## FAILED: object &quot;test_indices&quot; doesn't exist.
-## FAILED: object &quot;train_indices&quot; doesn't exist.
-## ERROR when running  check(TRUE, all(names(College) %in% names(Train_data)))
-## FAILED: object &quot;MSE_test&quot; doesn't exist.
-## ERROR when running  check(TRUE, MSE_train &gt; 0)
-## ERROR when running  check(TRUE, inherits(Yield_mod1, &quot;lm&quot;))
-## FAILED: object &quot;fhat_train&quot; doesn't exist.
-## FAILED: object &quot;fhat_test&quot; doesn't exist.</code></pre>
+## passed: &quot;Yield&quot; %in% names(College)
+## passed: object &quot;test_indices&quot; exists
+## passed: object &quot;train_indices&quot; exists
+## passed: all(names(College) %in% names(Train_data))
+## passed: object &quot;MSE_test&quot; exists
+## passed: MSE_train &gt; 0
+## passed: inherits(Yield_mod1, &quot;lm&quot;)
+## passed: object &quot;fhat_train&quot; exists
+## passed: object &quot;fhat_test&quot; exists</code></pre>
 </div>
 </div>
 

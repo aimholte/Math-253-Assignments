@@ -12,10 +12,10 @@ k_fold1 <- function(formula, method = lm, data = mtcars, predfun = predict, k = 
   for (i in 1:k){
     mspe[i] <-
       training <- data[sets!=i,]
-      testing <- data[sets==i,]
+      For_Testing <- data[sets==i,]
       mod <- lm(formula, data = training)
-      yhat <- predict(mod, data = testing)
-      error_estimate <- sum(tesing - yhat)^2
+      yhat <- predict(mod, data = For_Testing)
+      error_estimate <- sum(For_Testing - yhat)^2
       
   }
   mean(mspe)

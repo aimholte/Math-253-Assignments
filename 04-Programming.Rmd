@@ -12,22 +12,43 @@ text(c(40,20), c(-8,5), c("hello","goodybe"))
 polygon(c(0,40,40), c(-10,-10,10), col = "tomato")
 ```
 
-#Task 1
+#Task 2
 ```{r}
 plot(1, xlim = c(0, 100), ylim = c(0,100), type="n")
-#Task 2
 x1 <- points(0,0,pch = 20)
 y1 <- points(0,100, pch = 20)
 lines(c(0,0), c(0,100))
 x2 <- points(100,0, pch=20)
 y2 <- points(100,100, pch=20)
 lines(c(0,100,100,0),c(100,100,0,0))
-#Task 3
-#x3 <- lines(c(cos(seq(0,2*pi))))
-#y3 <- lines(sin(seq(0,2*pi))))
 ```
 
-
+#Task 3
+```{r}
+plot(1, xlim = c(0, 100), ylim = c(0,100), type="n")
+x3 <- points(c(cos(seq(0,2*pi))))
+y3 <- points(c(sin(seq(0,2*pi))))
+center <- points(50, 60)
+lines(x3, y3)
+```
+## Task 4
+```{r}
+plot(1, xlim = c(0, 100), ylim = c(0,100), type="n")
+angles <- seq(0,2*pi)
+x4 <- points(c(cos(angles))) * abs(cos(angles))
+y4 <-  points(c(sin(angles))) * abs(sin(angles))
+polygon(x4, y4)
+```
+##Task 5
+```{r}
+plot(1, xlim = c(0, 100), ylim = c(0,100), type="n", xlab = "Some points", ylab = "Some more points")
+x1 <- points(0,0, col = "red", pch = 20)
+y1 <- points(0,100, col = "blue", pch = 20)
+lines(c(0,0), c(0,100), col = "purple")
+x2 <- points(100,0, pch=20)
+y2 <- points(100,100, pch=20)
+lines(c(0,100,100,0),c(100,100,0,0), col = "green")
+```
 
 ## Test statements
 

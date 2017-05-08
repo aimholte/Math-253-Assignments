@@ -121,7 +121,7 @@ $(document).ready(function () {
 
 <div id="in-class-programming-activity-day-9" class="section level1">
 <h1>In-Class Programming Activity, Day 9</h1>
-<p>Your work goes here …</p>
+<p>Your work goes here … #Task 1</p>
 <pre class="r"><code>poker_deck &lt;- c(outer((10 * 2:14), 1:4, '+'))
 suits &lt;- function(cards){
   cards %% 10
@@ -141,7 +141,56 @@ is_straight &lt;- function(cards){
 
 is_straight_flush &lt;- function(cards){
   is_flush(cards) &amp;&amp; is_straight(cards)
-  }</code></pre>
+}
+
+is_royal_flush &lt;- function(cards){
+  is_flush(cards) &amp;&amp; is_straight(cards) &amp;&amp; ranks(cards) &gt;= 10
+}
+
+
+is_four_of_a_kind &lt;- function(cards){
+  length(unique(ranks(cards))) == 1
+}
+
+three_of_a_kind &lt;- function(cards){
+  length(unique(ranks(sample(cards,3)))) == 1
+}
+
+two_pair &lt;- function(cards){
+  length(unique(ranks(sample(cards,2)))) == 1 &amp;&amp; length(unique(ranks(sample(cards,2)))) == 1
+}
+
+one_pair &lt;- function(cards){
+  length(unique(ranks(sample(cards,2)))) == 1
+}
+
+full_house &lt;- function(cards){
+  three_of_a_kind(cards) &amp;&amp; two_pair(cards)
+}</code></pre>
+<pre class="r"><code>before_draw &lt;- function() {
+  five_cards &lt;- sample(poker_deck, 5)
+  if(is_full_house(five_cards))
+    print(&quot;Full House&quot;)
+  if(is_flush(five_cards))
+    print(&quot;Flush&quot;)
+  if(is_four_of_a_kind(five_cards))
+    print(&quot;Four of a kind&quot;)
+  if(is_royal_flush(five_cards))
+    print(&quot;Royal flush&quot;)
+  if(is_straight(five_cards))
+    print(&quot;Straight&quot;)
+  if(is_straight_flush(five_cards))
+    print(&quot;Straight Flush&quot;)
+  if(full_house(five_cards))
+     print(&quot;Full house&quot;)
+  if(three_of_a_kind(five_cards))
+     print(&quot;Three of a kind&quot;)
+  if(two_pair(five_cards))
+    print(&quot;Two pair&quot;)
+  if(one_pair(five_cards))
+     print(&quot;One pair&quot;)
+}</code></pre>
+<pre class="r"><code>#table(sapply(1:10000), FUN=before_draw)</code></pre>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>
 <pre class="r"><code>scoreActivity::score253(9)</code></pre>

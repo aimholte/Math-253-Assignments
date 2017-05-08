@@ -3,9 +3,9 @@
 Your work goes here ...
 
 ## Task 1
-#```{r}
+```{r}
 #download.file("http://www-bcf.usc.edu/~gareth/ISL/Auto.csv",destfile="Auto.csv")
-#```
+```
 
 ## Task 2
 ```{r}
@@ -19,9 +19,15 @@ task3 <- summary(Auto$horsepower)
 
 ## Task 4
 ```{r}
-
+#install.packages(ISLR)
 ```
 
+## Task 5
+```{r}
+task5top <- Auto[1:5,1:3]
+#dim(Auto)
+task5bottom <- Auto[(nrow(Auto)-4):nrow(Auto), -(1:6)]
+```
 
 
 

@@ -7,24 +7,38 @@ Sigma <- cbind(c(1.0, -0.7), c(-0.7, 1.0))
 Sigma
 Sigma_inv <- solve(Sigma)
 Sigma_inv
-test_inverse <- Sigma * Sigma_inv
-
+test_inverse <- Sigma %*% Sigma_inv
 A <- chol(Sigma)
-A
 t(A)
 ```
 ```{r}
 x1 <- rnorm(10)
 x2 <- rnorm(10)
-
 x1 <- cbind(x1)
 x2 <- cbind(x2)
-
 inner_product <- t(x1) %*% x2
+X <- cbind(x1, x2)
+(t(X) %*% X) / nrow(X)
+```
+```{r}
+w1 <- rnorm(10000)
+w2 <- rnorm(10000)
+w1 <- cbind(w1)
+w2 <- cbind(w2)
+W <- cbind(w1, w2)
+W_cov <- t(W) %*% W / nrow(W)
 ```
 
+```{r}
+A_inv <- chol(t(Sigma))
+Y <- X %*% A
+Y <- W %*% A
+Y_cov <- t(Y) %*% Y / nrow(Y)
+```
 
-
+```{r}
+plot(Y[ , 1], Y[ , 2], col = rgb(0, 0, 0, .05))
+```
 ## Test statements
 
 ```{r}

@@ -20,8 +20,19 @@ linear_combine <- function(data, coefs){
   return(result)
 }
 
-LL_logistic <- function(data, coefs, outcome){
+LL_logistic <- function(data, coefs){
+  p_i <- logistic(linear_combine(data,coefs))
+  for (i in i:nrow(data)) {
+    likelihood <- ifelse(p_i = p_i, likelihood = 1-p_i)
+  }
+  sum_likelihoods <- sum_likelihoods + likelihood
 }
+
+#LL_logistic(data=Default, 
+#            coefs = c(intercept = 1, income = -0.0001), 
+#            outcome = Default$default == "Yes")
+
+#optim(LL_logistic(Default, coefs = c(intercept = 1, income = -.0001)))
 ```
 
 

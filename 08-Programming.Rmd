@@ -1,9 +1,8 @@
 # In-Class Programming Activity, Day 8
 
 Your work goes here ...
-
-```{r}
 #Task 1 
+```{r}
 x = runif(100, min = 20, max = 70)
 My_data <- data.frame(x = x,
                       y = 5 + 3*x + 2*rnorm(100))
@@ -25,8 +24,8 @@ best <- optim(starting_params, LL_line, control = list(fnscale = -1))
 
 best
 ```
-```{r}
 #Task 2
+```{r}
 load(url("http://tiny.cc/dcf/Taxi_trips.rda"))
 
 waiting_fare <- Taxi_trips$fare_amount - (Taxi_trips$base_fare + Taxi_trips$per_mile*Taxi_trips$trip_distance)

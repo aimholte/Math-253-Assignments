@@ -3,6 +3,37 @@
 Your work goes here ...
 
 Some content goes here.
+# Task 1
+```{r}
+library(mosaicData)
+```
+
+# Task 2
+```{r}
+task2 <- "Today is "
+paste(task2)
+date()
+```
+
+# Task 3
+```{r}
+task3a <- names(Galton)
+task3b <- nrow(Galton)
+task3c <- mean(Galton$height)
+```
+
+```{r}
+task4 <- matrix(c(1, 4, 2, 5, 3, 6), nrow = 2)
+```
+#Task 5
+```{r}
+x <- runif(1000)
+task5x <- c(x)
+y <- runif(1000)
+task5y <- c(y)
+task5pi <- sqrt((task5x + task5y)^2)
+length(task5pi <= 1)
+```
 
 ## Test statements
 

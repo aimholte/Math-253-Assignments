@@ -1,6 +1,7 @@
 # In-Class Programming Activity, Day 9
 
 Your work goes here ...
+#Task 1
 ```{r}
 poker_deck <- c(outer((10 * 2:14), 1:4, '+'))
 suits <- function(cards){
@@ -21,10 +22,63 @@ is_straight <- function(cards){
 
 is_straight_flush <- function(cards){
   is_flush(cards) && is_straight(cards)
-  }
+}
+
+is_royal_flush <- function(cards){
+  is_flush(cards) && is_straight(cards) && ranks(cards) >= 10
+}
+
+
+is_four_of_a_kind <- function(cards){
+  length(unique(ranks(cards))) == 1
+}
+
+three_of_a_kind <- function(cards){
+  length(unique(ranks(sample(cards,3)))) == 1
+}
+
+two_pair <- function(cards){
+  length(unique(ranks(sample(cards,2)))) == 1 && length(unique(ranks(sample(cards,2)))) == 1
+}
+
+one_pair <- function(cards){
+  length(unique(ranks(sample(cards,2)))) == 1
+}
+
+full_house <- function(cards){
+  three_of_a_kind(cards) && two_pair(cards)
+}
 ```
 
+```{r}
+before_draw <- function() {
+  five_cards <- sample(poker_deck, 5)
+  if(is_full_house(five_cards))
+    print("Full House")
+  if(is_flush(five_cards))
+    print("Flush")
+  if(is_four_of_a_kind(five_cards))
+    print("Four of a kind")
+  if(is_royal_flush(five_cards))
+    print("Royal flush")
+  if(is_straight(five_cards))
+    print("Straight")
+  if(is_straight_flush(five_cards))
+    print("Straight Flush")
+  if(full_house(five_cards))
+     print("Full house")
+  if(three_of_a_kind(five_cards))
+     print("Three of a kind")
+  if(two_pair(five_cards))
+    print("Two pair")
+  if(one_pair(five_cards))
+     print("One pair")
+}
+```
 
+```{r}
+#table(sapply(1:10000), FUN=before_draw)
+```
 
 ## Test statements
 

@@ -2,18 +2,44 @@
 
 Your work goes here ...
 
-```{r}
 #Task 1
+```{r}
 data(College, package = "ISLR")
-
-#Task 2
-Yield <- College["Enroll"]/College["Accept"]
-
-#Task 3
-all_indices <- 1:nrow(College)
 ```
 
+#Task 2
+```{r}
+#Yield <- College["Enroll"]/College["Accept"]
+College$Yield <- College$Enroll / College$Accept
+```
 
+#Task 3
+```{r}
+all_indices <- 1:nrow(College)
+train_indices <- sample(all_indices, 200, replace = TRUE)
+test_indices <- setdiff(all_indices, train_indices)
+Train_data <- College[train_indices, ]
+Test_data <- College[test_indices, ]
+```
+
+#Task 4
+```{r}
+Yield_mod1 <- lm(Yield ~ Top10perc + Outstate + Expend, data = Train_data)
+```
+
+##Task 5
+```{r}
+Y_train <- Train_data$Yield
+fhat_train <- predict(Yield_mod1, newdata = Train_data)
+MSE_train <- mean((fhat_train - Y_train)^2)
+```
+
+##Task 6
+```{r}
+Y_test <- Test_data$Yield
+fhat_test <- predict(Yield_mod1, newdata = Test_data)
+MSE_test <- mean((fhat_test - Y_test)^2)
+```
 ## Test statements
 
 ```{r}

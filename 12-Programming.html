@@ -119,55 +119,54 @@ $(document).ready(function () {
 </div>
 
 
-<div id="in-class-programming-activity-day-1" class="section level1">
-<h1>In-Class Programming Activity, Day 1</h1>
+<div id="in-class-programming-activity-day-12" class="section level1">
+<h1>In-Class Programming Activity, Day 12</h1>
 <p>Your work goes here …</p>
-<p>Some content goes here. # Task 1</p>
-<pre class="r"><code>library(mosaicData)</code></pre>
-</div>
-<div id="task-2" class="section level1">
-<h1>Task 2</h1>
-<pre class="r"><code>task2 &lt;- &quot;Today is &quot;
-paste(task2)</code></pre>
-<pre><code>## [1] &quot;Today is &quot;</code></pre>
-<pre class="r"><code>date()</code></pre>
-<pre><code>## [1] &quot;Mon May  8 18:54:13 2017&quot;</code></pre>
-</div>
-<div id="task-3" class="section level1">
-<h1>Task 3</h1>
-<pre class="r"><code>task3a &lt;- names(Galton)
-task3b &lt;- nrow(Galton)
-task3c &lt;- mean(Galton$height)</code></pre>
-<pre class="r"><code>task4 &lt;- matrix(c(1, 4, 2, 5, 3, 6), nrow = 2)</code></pre>
-</div>
-<div id="task-5" class="section level1">
-<h1>Task 5</h1>
-<pre class="r"><code>x &lt;- runif(1000)
-task5x &lt;- c(x)
-y &lt;- runif(1000)
-task5y &lt;- c(y)
-task5pi &lt;- sqrt((task5x + task5y)^2)
-length(task5pi &lt;= 1)</code></pre>
-<pre><code>## [1] 1000</code></pre>
+<pre class="r"><code>n_cases &lt;- 10000
+red_mean &lt;- c(1,0)
+green_mean &lt;- c(0,-1)
+blue_mean &lt;- c(-1,1)
+covar_red &lt;- matrix(c(3,-1.7,-1.7,1), nrow = 2)
+covar_blue &lt;- matrix(c(2,1.5,1.5,3), nrow = 2)</code></pre>
+<pre class="r"><code>One &lt;- matrix(c(n_cases, rnorm(n_cases, mean = 0, sd = 1), rnorm(n_cases, mean = 0, sd = 1)), ncol = 3)
+Two &lt;- matrix(c(n_cases, rnorm(n_cases, mean = 0, sd = 1), rnorm(n_cases, mean = 0, sd = 1)), ncol = 3)
+Three &lt;- matrix(c(n_cases, rnorm(n_cases, mean = 0, sd = 1),  rnorm(n_cases, mean = 0, sd = 1)), ncol = 3)</code></pre>
+<pre class="r"><code>Red &lt;- chol(covar_red) * One[2,2]
+Green &lt;- chol(covar_red) * Two[2,2]
+Blue &lt;- chol(covar_blue) * Three[2,2]</code></pre>
+<pre class="r"><code>Red &lt;- outer(red_mean, Red)
+Green &lt;- outer(green_mean, Green)
+Blue &lt;- outer(blue_mean, Blue)</code></pre>
+<pre class="r"><code>#Red &lt;- data.frame(x, y, class = &quot;red&quot;, stringsAsFactors = FALSE)
+#Blue &lt;- data.frame(x, y, class = &quot;blue&quot;, stringsAsFactors = FALSE)
+#Green &lt;- data.frame(x, y, class = &quot;green&quot;, stringsAsFactors = FALSE)</code></pre>
+<pre class="r"><code>Same_sigma &lt;- rbind(Red, Green)
+Different_sigma &lt;- rbind(Red, Blue)</code></pre>
+<pre class="r"><code>library(MASS)
+#mod_LDA_one &lt;- lda(class ~ x + y, data = Same_sigma)
+#test_LDA_one &lt;- predict(mod_LDA_one, newdata = Same_sigma)
+#table(Same_sigma$class, test_LDA_one$class)
+#mod_QDA_one &lt;- qda(class ~ x + y, data = Same_sigma)
+#test_QDA_one &lt;- qda(mod_LDA_one, newdata = Same_sigma)
+#table(Same_sigma$class, test_QDA_one$class)</code></pre>
 <div id="test-statements" class="section level2">
 <h2>Test statements</h2>
-<pre class="r"><code>scoreActivity::score253(1)</code></pre>
+<pre class="r"><code>scoreActivity::score253(12)</code></pre>
 <pre><code>## --------
-## Running test statements for day  01</code></pre>
-<pre><code>## Loading required package: scoreActivity</code></pre>
+## Running test statements for day  12</code></pre>
 <pre><code>## Loading required package: lazyeval</code></pre>
-<pre><code>## Warning in if (abs(expr - match$x) &lt; match$pm) wins &lt;- TRUE: the condition
-## has length &gt; 1 and only the first element will be used</code></pre>
-<pre><code>## FAILED: &quot;package:mosaic&quot; %in% search()
-## passed: is.character(task2)
-## FAILED: grepl(&quot;^Today is&quot;, task2) &amp;&amp; grepl(&quot;201.$&quot;, task2)
-## passed: all(task3a %in% names(mosaicData::Galton))
-## passed: task3b
-## passed: task3c
-## passed: all(dim(task4) == c(2, 3))
-## passed: max(task5x) &lt;= 1 &amp;&amp; min(task5x) &gt;= 0
-## passed: max(task5y) &lt;= 1 &amp;&amp; min(task5y) &gt;= 0
-## FAILED: task5pi</code></pre>
+<pre><code>## Warning in results[k] &lt;- paste(&quot;ERROR when running &quot;, deparse(ldots[k][[1]]
+## $expr)): number of items to replace is not a multiple of replacement length</code></pre>
+<pre><code>## passed: object &quot;Red&quot; exists
+## passed: object &quot;Green&quot; exists
+## passed: object &quot;Blue&quot; exists
+## passed: all(names(Red) %in% c(&quot;x&quot;, &quot;y&quot;, &quot;class&quot;))
+## ERROR when running  check(TRUE, all(abs(apply(Red[, c(1, 2)], FUN = mean, MARGIN = 2) - 
+## ERROR when running  check(TRUE, all(table(Same_sigma$class) == c(n_cases, n_cases)))
+## FAILED: object &quot;mod_LDA_one&quot; doesn't exist.
+## FAILED: object &quot;mod_QDA_two&quot; doesn't exist.
+## FAILED: object &quot;test_QDA_one&quot; doesn't exist.
+## FAILED: object &quot;test_LDA_two&quot; doesn't exist.</code></pre>
 </div>
 </div>
 
