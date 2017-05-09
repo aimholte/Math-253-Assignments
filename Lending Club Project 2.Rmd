@@ -184,3 +184,32 @@ actual_payment <- expected_payment - defaults
 actual_payment
 defaults
 ```
+#Tree Classification Model
+```{r}
+library(tree)
+loan_pure <- tree.control(nrow(training_data), mincut = 0, minsize = 1, mindev = 0)
+status_classifier <- tree(model_formula, data = training_data, control = loan_pure)
+status_classifier <- prune.tree(status_classifier, best = 15)
+testing_status_classifier <- predict(status_classifier, testing_data)
+testing_preds <- ifelse(testing_status_classifier > .80, 1, 0)
+table(testing_data$loan_status, testing_preds)
+```
+#Test error rate, specificity, and sensitivity
+```{r}
+test_error_rate <- sum(71, 341) / sum(2261, 341, 71, 11519)
+specificity <- 2261 / sum(2261, 341)
+sensitivity <- 11519 / sum(71, 11519)
+test_error_rate
+specificity
+sensitivity
+```
+#Risk analysis
+```{r}
+defaults <- (payments * .94)*-.07 * 2157
+#Expected value of defaults
+expected_payment <- (amounts*(1+rate/100) - amounts)* (9603 + 2157)
+#The expected amount we will make in total if we loan to everyone
+actual_payment <- expected_payment - defaults
+actual_payment
+defaults
+```

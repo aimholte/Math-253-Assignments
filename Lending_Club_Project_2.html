@@ -510,6 +510,48 @@ actual_payment</code></pre>
 <pre class="r"><code>defaults</code></pre>
 <pre><code>## [1] -1605009</code></pre>
 </div>
+<div id="tree-classification-model" class="section level1">
+<h1>Tree Classification Model</h1>
+<pre class="r"><code>library(tree)
+loan_pure &lt;- tree.control(nrow(training_data), mincut = 0, minsize = 1, mindev = 0)
+status_classifier &lt;- tree(model_formula, data = training_data, control = loan_pure)</code></pre>
+<pre><code>## Warning in tree(model_formula, data = training_data, control = loan_pure):
+## NAs introduced by coercion</code></pre>
+<pre class="r"><code>status_classifier &lt;- prune.tree(status_classifier, best = 15)
+testing_status_classifier &lt;- predict(status_classifier, testing_data)</code></pre>
+<pre><code>## Warning in pred1.tree(object, tree.matrix(newdata)): NAs introduced by
+## coercion</code></pre>
+<pre class="r"><code>testing_preds &lt;- ifelse(testing_status_classifier &gt; .80, 1, 0)
+table(testing_data$loan_status, testing_preds)</code></pre>
+<pre><code>##    testing_preds
+##         0     1
+##   0  2261   341
+##   1    71 11519</code></pre>
+</div>
+<div id="test-error-rate-specificity-and-sensitivity" class="section level1">
+<h1>Test error rate, specificity, and sensitivity</h1>
+<pre class="r"><code>test_error_rate &lt;- sum(71, 341) / sum(2261, 341, 71, 11519)
+specificity &lt;- 2261 / sum(2261, 341)
+sensitivity &lt;- 11519 / sum(71, 11519)
+test_error_rate</code></pre>
+<pre><code>## [1] 0.02903044</code></pre>
+<pre class="r"><code>specificity</code></pre>
+<pre><code>## [1] 0.868947</code></pre>
+<pre class="r"><code>sensitivity</code></pre>
+<pre><code>## [1] 0.993874</code></pre>
+</div>
+<div id="risk-analysis-2" class="section level1">
+<h1>Risk analysis</h1>
+<pre class="r"><code>defaults &lt;- (payments * .94)*-.07 * 2157
+#Expected value of defaults
+expected_payment &lt;- (amounts*(1+rate/100) - amounts)* (9603 + 2157)
+#The expected amount we will make in total if we loan to everyone
+actual_payment &lt;- expected_payment - defaults
+actual_payment</code></pre>
+<pre><code>## [1] 20754993</code></pre>
+<pre class="r"><code>defaults</code></pre>
+<pre><code>## [1] -1605009</code></pre>
+</div>
 
 
 
