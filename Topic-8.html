@@ -191,25 +191,54 @@ classification_error</code></pre>
 <pre class="r"><code>#library(devtools)
 #install_github(&quot;harrysouthworth/gbm&quot;)</code></pre>
 <pre class="r"><code>#install.packages(&quot;gbm&quot;)
-#library(gbm)
-#boosting_fit &lt;- gbm(Direction ~ . - Year - Today, data = Weekly_train, n.trees = 5000)
-#boost_probs &lt;- predict(boosting_fit, Weekly_test, type = &quot;response&quot;)
-#boost_pred &lt;- ifelse(boost_probs &gt; 0.5)
-#table(Weekly_test$direction, boost_pred)
-#table(Weekly_test$direction, boost_probs &gt; .5 )</code></pre>
-<pre class="r"><code>#install.packages(&quot;randomForest&quot;)
-library(randomForest)</code></pre>
+library(gbm)</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: splines</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre class="r"><code>boosting_fit &lt;- gbm(Direction ~ . - Year - Today, data = Weekly_train, distribution = &quot;bernoulli&quot;, n.trees = 5000)
+boost_probs &lt;- predict(boosting_fit, Weekly_test, n.trees = 5000)
+boost_pred &lt;- ifelse(boost_probs &gt; 0.5, 1, 0)
+table(Weekly_test$Direction, boost_pred)</code></pre>
+<pre><code>##    boost_pred
+##       0   1
+##   0 168  87
+##   1 181 109</code></pre>
+<pre class="r"><code>#table(Weekly_test$Direction, boost_probs &gt; .5)</code></pre>
+<pre class="r"><code>classification_error &lt;- sum(178,88) / sum(167,88,178,112)
+classification_error</code></pre>
+<pre><code>## [1] 0.4880734</code></pre>
+<p>Classification error of 49%…continue with bagging!</p>
+<pre class="r"><code>library(randomForest)</code></pre>
 <pre><code>## randomForest 4.6-12</code></pre>
 <pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
-<pre class="r"><code>randomforest_fit &lt;- randomForest(Direction ~ . - Year - Today, data = Weekly_train, mtry = 2)</code></pre>
+<pre class="r"><code>bagging_fit &lt;- randomForest(Direction ~ . - Year - Today, data = Weekly_train, mtry = 6)</code></pre>
 <pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
 ## unique values. Are you sure you want to do regression?</code></pre>
-<pre class="r"><code>rf_probs &lt;- predict(randomforest_fit, Weekly_test, type = &quot;response&quot;)
+<pre class="r"><code>bagging_probs &lt;- predict(bagging_fit, Weekly_test)
+table(Weekly_test$Direction, bagging_probs &gt; .5)</code></pre>
+<pre><code>##    
+##     FALSE TRUE
+##   0    74  181
+##   1    74  216</code></pre>
+<pre class="r"><code>classification_error &lt;- (72 + 173) / (82 + 173 + 72 + 218)
+classification_error</code></pre>
+<pre><code>## [1] 0.4495413</code></pre>
+<p>This results in a classification error of 45%…Now let’s try random forests.</p>
+<pre class="r"><code>library(randomForest)
+randomforest_fit &lt;- randomForest(Direction ~ . - Year - Today, data = Weekly_train, mtry = 2)</code></pre>
+<pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
+## unique values. Are you sure you want to do regression?</code></pre>
+<pre class="r"><code>rf_probs &lt;- predict(randomforest_fit, Weekly_test)
 table(Weekly_test$Direction, rf_probs &gt; .5 )</code></pre>
 <pre><code>##    
 ##     FALSE TRUE
-##   0    69  186
-##   1    65  225</code></pre>
+##   0    67  188
+##   1    66  224</code></pre>
+<pre class="r"><code>classification_error &lt;- sum(69,184) / sum(71,184,69,221)
+classification_error</code></pre>
+<pre><code>## [1] 0.4642202</code></pre>
+<p>Based off these error rates, it is clear that bagging has the lowest clasification error out of the techniques used.</p>
 </div>
 
 

@@ -69,20 +69,38 @@ Classification error is 46.2%...time for boosting!
 
 ```{r}
 #install.packages("gbm")
-#library(gbm)
-#boosting_fit <- gbm(Direction ~ . - Year - Today, data = Weekly_train, n.trees = 5000)
-#boost_probs <- predict(boosting_fit, Weekly_test, type = "response")
-#boost_pred <- ifelse(boost_probs > 0.5)
-#table(Weekly_test$direction, boost_pred)
-#table(Weekly_test$direction, boost_probs > .5 )
+library(gbm)
+boosting_fit <- gbm(Direction ~ . - Year - Today, data = Weekly_train, distribution = "bernoulli", n.trees = 5000)
+boost_probs <- predict(boosting_fit, Weekly_test, n.trees = 5000)
+boost_pred <- ifelse(boost_probs > 0.5, 1, 0)
+table(Weekly_test$Direction, boost_pred)
+#table(Weekly_test$Direction, boost_probs > .5)
 ```
-
 ```{r}
-#install.packages("randomForest")
+classification_error <- sum(178,88) / sum(167,88,178,112)
+classification_error
+```
+Classification error of 49%...continue with bagging!
+```{r}
+library(randomForest)
+bagging_fit <- randomForest(Direction ~ . - Year - Today, data = Weekly_train, mtry = 6)
+bagging_probs <- predict(bagging_fit, Weekly_test)
+table(Weekly_test$Direction, bagging_probs > .5)
+```
+```{r}
+classification_error <- (72 + 173) / (82 + 173 + 72 + 218)
+classification_error
+```
+This results in a classification error of 45%...Now let's try random forests.
+```{r}
 library(randomForest)
 randomforest_fit <- randomForest(Direction ~ . - Year - Today, data = Weekly_train, mtry = 2)
-```
-```{r}
-rf_probs <- predict(randomforest_fit, Weekly_test, type = "response")
+rf_probs <- predict(randomforest_fit, Weekly_test)
 table(Weekly_test$Direction, rf_probs > .5 )
 ```
+```{r}
+classification_error <- sum(69,184) / sum(71,184,69,221)
+classification_error
+```
+Based off these error rates, it is clear that bagging has the lowest clasification error out of the techniques used.
+
