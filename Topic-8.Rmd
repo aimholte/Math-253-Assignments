@@ -1,2 +1,88 @@
+# A.J. Imholte
 # Topic 8 Exercises: Tree-based models
 
+# Theory-Based Questions
+
+# 8.4.1
+
+ ![Alt text](IMG_0696.JPG)
+
+# 8.4.2
+Firt, the boost algorithm calculates the model step by step, where \hat{f_x} = 0 and r_i = y_i for all values of i. The algorithim then iterate over each value of i for each step. This results in a calculation of 1/lambda * f_i*(x*i) for every value of i. Then another stump i fit to maximize the fit to residuals.
+
+So, \hat{f_x} = lambda*\hat{f1_x} + lambda*\hat{f2_x} and r_i = y_i - lambda*\hat{f1_xi} - lambda*\hat{f2_xi} for all values of i. This results in the model of the form suggested at the beginning of the problem.
+
+# 8.4.3
+```{r}
+p <- seq(0, 1, 0.01)
+gini_index <- 2 * p * (1-p)
+class_error <- 1 - pmax(p, 1 - p)
+class_entropy <- - ((p * log(p)) + (1 - p) * log(1-p))
+matplot(p, cbind(gini_index, class_error, class_entropy), col = c("red", "orange", "green"))
+```
+#8.4.4
+```{r}
+par(xpd = NA)
+plot(NA, NA, type = "n", xlim = c(-2, 2), ylim = c(-3, 3), xlab = "X1", ylab = "X2")
+# X2 < 1
+lines(x = c(-2, 2), y = c(1, 1))
+# X1 < 1 with X2 < 1
+lines(x = c(1, 1), y = c(-3, 1))
+text(x = (-2 + 1)/2, y = -1, labels = c(-1.8))
+text(x = 1.5, y = -1, labels = c(0.63))
+# X2 < 2 with X2 >= 1
+lines(x = c(-2, 2), y = c(2, 2))
+text(x = 0, y = 2.5, labels = c(2.49))
+# X1 < 0 with X2<2 and X2>=1
+lines(x = c(0, 0), y = c(1, 2))
+text(x = -1, y = 1.5, labels = c(-1.06))
+text(x = 1, y = 1.5, labels = c(0.21))
+```
+#8.4.5
+For the majority vote approach, X will be classified as Red because it is the most commonly occurding class among the 10 total predictions. However - X will be classified as green with the average probability approach, since the average probability for the 10 data points is 0.45.
+
+#Programming activity - 8.4.12
+```{r}
+set.seed(1)
+library(ISLR)
+train <- sample(nrow(Weekly), nrow(Weekly) / 2)
+Weekly$Direction <- ifelse(Weekly$Direction == "Up", 1, 0)
+Weekly_train <- Weekly[train, ]
+Weekly_test <- Weekly[-train, ]
+table(Weekly_test$Direction)
+```
+
+```{r}
+mod_glm_train <- glm(Direction ~ . - Year - Today, data = Weekly_train, family = "binomial")
+mod_glm_probs <- predict(mod_glm_train, Weekly_test, type = "response")
+table(Weekly_test$Direction, mod_glm_probs > .5)
+```
+```{r}
+classification_error <- (8+244)/(11+244+8+282)
+classification_error
+```
+Classification error is 46.2%...time for boosting!
+```{r}
+#library(devtools)
+#install_github("harrysouthworth/gbm")
+```
+
+```{r}
+#install.packages("gbm")
+#library(gbm)
+#boosting_fit <- gbm(Direction ~ . - Year - Today, data = Weekly_train, n.trees = 5000)
+#boost_probs <- predict(boosting_fit, Weekly_test, type = "response")
+#boost_pred <- ifelse(boost_probs > 0.5)
+#table(Weekly_test$direction, boost_pred)
+#table(Weekly_test$direction, boost_probs > .5 )
+```
+
+```{r}
+#install.packages("randomForest")
+library(randomForest)
+randomforest_fit <- randomForest(Direction ~ . - Year - Today, data = Weekly_train, mtry = 2)
+```
+```{r}
+rf_probs <- predict(randomforest_fit, Weekly_test, type = "response")
+table(Weekly_test$Direction, rf_probs > .5 )
+```
