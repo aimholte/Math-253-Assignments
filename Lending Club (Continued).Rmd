@@ -1,0 +1,27 @@
+#Lending Club (Continued)
+
+```{r}
+load("Loans.rda")
+```
+
+#Graphical Representations
+```{r}
+hist(Loans$loan_amnt)
+hist(Loans$int_rate)
+boxplot(int_rate ~ grade, data = Loans, main = "Loan Interest Rate Based on Loan Grade")
+```
+
+#Total Amount of Loans in Each Status Type
+```{r}
+table(Loans$loan_status)
+```
+
+```{r}
+keepers <- Loans %in% c("Charged Off", "Fully Paid", "Current")
+```
+
+```{r}
+data_for_modeling <- Loans_100k[keepers,]
+table(data_for_modeling$loan_status)
+```
+
