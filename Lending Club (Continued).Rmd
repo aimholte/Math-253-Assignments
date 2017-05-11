@@ -4,6 +4,9 @@
 #Data Cleaning
 ```{r}
 load("Loans.rda")
+```
+
+```{r}
 Loans$id <- NULL
 Loans$member_id <- NULL
 Loans$emp_title <- NULL
@@ -65,11 +68,12 @@ training_data <- data_for_modeling[train,]
 testing_data <- data_for_modeling[-train,]
 ```
 
-#Models
+#Logistic Models
 ```{r}
 glm_fit <- glm(formula3,data = training_data, family = binomial)
 glm_test <- predict(glm_fit, testing_data, type = "response")
 ```
+Formula3 was our best formula...using that for now on.
 
 ```{r}
 table(testing_data$loan_status, glm_test > .7)
@@ -83,4 +87,17 @@ test_error_rate
 specificity
 sensitivity
 ```
+#Tree Classification Model
+```{r}
+library(tree)
+loan_pure <- tree.control(nrow(training_data), mincut = 2, minsize = 5, mindev = 0)
+status_classifier <- tree(formula3, data = training_data, control = loan_pure)
+status_classifier <- prune.tree(status_classifier, best = 100)
+testing_status_classifier <- predict(status_classifier, testing_data)
+```
 
+
+```{r}
+testing_preds <- ifelse(testing_status_classifier > .5, 1, 0)
+table(testing_data$loan_status, testing_preds)
+```

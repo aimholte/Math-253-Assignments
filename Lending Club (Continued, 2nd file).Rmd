@@ -1,0 +1,51 @@
+
+```{r}
+load("Loans.rda")
+```
+
+```{r}
+loan_sample <- data.frame(Loans)
+```
+
+```{r}
+keepers <- loan_sample$loan_status %in% c("Charged Off", "Fully Paid")
+```
+
+```{r}
+data_for_modeling <- loan_sample[keepers, ]
+```
+
+```{r}
+table(data_for_modeling$loan_status)
+```
+
+```{r}
+train <- 1:(nrow(data_for_modeling) / 2)
+training_data <- data_for_modeling[train,]
+testing_data <- data_for_modeling[-train,]
+```
+
+```{r}
+training_2 <- 1:(nrow(data_for_modeling) / 175)
+testing_data2 <- data_for_modeling[training_2, ]
+```
+
+```{r}
+library(randomForest)
+rf_mod <- randomForest(as.factor(loan_status) ~ annual_inc + int_rate + dti + total_pymnt + out_prncp + open_acc + revol_bal + funded_amnt_inv + total_acc + recoveries, data = testing_data2, ntrees = 70000)
+rf_test <- predict(rf_mod, testing_data)
+```
+
+```{r}
+table(testing_data$loan_status, rf_test)
+```
+```{r}
+test_error_rate <- sum(213, 3066) / sum(19089, 3066, 213, 104118)
+specificity <- 19089 / sum(19089, 3066)
+sensitivity <- 104118 / sum(104118, 213)
+test_error_rate
+specificity
+sensitivity
+```
+
+
