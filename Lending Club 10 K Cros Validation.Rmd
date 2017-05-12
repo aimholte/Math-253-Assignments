@@ -1,0 +1,71 @@
+```{r}
+loan_sample <- data.frame(Loans)
+```
+
+```{r}
+keepers <- loan_sample$loan_status %in% c("Charged Off", "Fully Paid")
+data_for_modeling <- loan_sample[keepers, ]
+data_for_modeling$loan_status[data_for_modeling$loan_status == "Charged Off"] <- as.numeric(0)
+data_for_modeling$loan_status[data_for_modeling$loan_status == "Fully Paid"] <- as.numeric(1)
+```
+
+```{r}
+data_for_modeling <- data_for_modeling[sample(nrow(data_for_modeling)),]
+folds <- cut(seq(1,nrow(data_for_modeling)),breaks=10,labels=FALSE)
+formula3 <- as.numeric(loan_status) ~ loan_amnt + int_rate + grade + annual_inc + total_pymnt + sub_grade + funded_amnt_inv + verification_status + dti + open_acc + revol_bal
+```
+
+```{r}
+for(i in 1:10){
+    testIndexes <- which(folds==i,arr.ind=TRUE)
+    testData <- data_for_modeling[testIndexes, ]
+    trainData <- data_for_modeling[-testIndexes, ]
+    glm_fit <- glm(formula3,data = trainData, family = binomial)
+    glm_test <- predict(glm_fit, testData, type = "response")
+    print(table(testData$loan_status, glm_test > .7))
+}
+```
+```{r}
+spec1 <- 4177/sum(318, 4177)
+spec2 <- 4294/sum(330, 4294)
+spec3 <- 4155/sum(4155,306)
+spec4 <- 4172/sum(4172,315)
+spec5 <- 4261/sum(4261, 329)
+spec6 <- 4223/sum(4223,325)
+spec7 <- 4134/sum(4134,343)
+spec8 <- 4219/sum(4219,315)
+spec9 <- 4223/sum(4223,321)
+spec10 <- 4191/sum(4191,297)
+spec.cv <- mean(spec1, spec2, spec3, spec4, spec5, spec6, spec7, spec8, spec8, 
+                spec10)
+spec.cv
+```
+```{r}
+sens1 <- 20722/sum(81,20722)
+sens2 <- 20606/sum(67,20606)
+sens3 <- 20773/sum(63,20773)
+sens4 <- 20716/sum(94,20716)
+sens5 <- 20631/sum(76,20631)
+sens6 <- 20676/sum(73,20676)
+sens7 <- 20738/sum(82,20738)
+sens8 <- 20688/sum(75,20688)
+sens9 <- 20694/sum(59,20694)
+sens10 <- 20733/sum(76,20733)
+sens.cv <- mean(sens1, sens2, sens3, sens4, sens5, sens6, sens7, sens8, sens9, sens10)
+sens.cv
+```
+```{r}
+classErr1 <- sum(81, 318)/25298
+classErr2 <- sum(67, 330)/25297
+classErr3 <- sum(63, 306)/25297
+classErr4 <- sum(94, 315)/25297
+classErr5 <- sum(76, 329)/25297
+classErr6 <- sum(73, 325)/25297
+classErr7 <- sum(82, 342)/25297
+classErr8 <- sum(75, 315)/25297
+classErr9 <- sum(59, 321)/25297
+classErr10 <- sum(76, 297)/25297
+mean(classErr1, classErr2, classErr3, classErr4, classErr5, classErr6, classErr7, classErr8, classErr9, classErr10)
+```
+
+
