@@ -1,0 +1,75 @@
+
+```{r}
+library(boot)
+library(mosaicData)
+```
+
+```{r}
+plot(trees$Volume ~ trees$Height, main = "Black Cherry Tree Volume Relationship",
+     xlab = "Height", ylab = "Volume", pch = 16, col = "blue")
+plot(trees$Volume ~ trees$Girth, main = "Black Cherry Tree Volume Relationship", xlab = "Girth", ylab = "Volume", pch = 16, col = "blue")
+```
+```{r}
+sampleMean <- function(data, indices){
+  return(mean(data[indices]))
+}
+```
+
+
+```{r}
+#the following function, volumeEstimate, will index the given data,
+#and run several regressions and report and store their r-squared statistics.
+volumeEstimate <- function(data, indices){
+  d <- data[indices, ]
+  H_Relationship <- lm(d$Volume ~ d$Height, data = d)
+  H_Relationship.rsq <- summary(H_Relationship)$r.square
+  G_Relationship <- lm(d$Volume ~ d$Girth, data = d)
+  G_Relationship.rsq <- summary(G_Relationship)$r.square
+  G_H_ratio <- d$Girth / d$Height
+  G_H_relationship <- lm(d$Volume ~ G_H_ratio, data = d)
+  G_H_relationship.rsq <- summary(G_H_relationship)$r.square
+  combined_relationship <- lm(d$Volume ~ d$Height + d$Girth, data = d)
+  combined_relationship.rsq <- summary(combined_relationship)$r.squared
+  combined_relationship2 <- lm(d$Volume ~ d$Height + d$Girth + G_H_ratio)
+  combined_relationship2.rsq <- summary(combined_relationship2)$r.squared
+  relationships <- c(H_Relationship.rsq,
+                     G_Relationship.rsq,G_H_relationship.rsq,
+                     combined_relationship.rsq,combined_relationship2.rsq)
+  return(relationships)
+}
+```
+
+#Now that we have our function in place, let's do a bootstrap!
+```{r}
+results <- boot(data = trees, statistic = volumeEstimate, R = 5000)
+#This will give us a bootstrapped result of our statistic of interest,
+#volumeEstimate, given the dataset (trees), over the number of iterations (5000).
+print(results)
+```
+#tn* is the rsquared statistic for each regression. Bias and standard error are also reported.
+
+#Histogram of the of the results of the first regression
+```{r}
+plot(results, index = 1)
+```
+#Confidence Intervals
+```{r}
+confidence_interval_H = boot.ci(results, index = 1, conf = 0.95, type = "bca")
+ci_H = confidence_interval_H$bca[, c(4, 5)]
+print(ci_H)
+```
+#Histograms
+```{r}
+hist(results$t[,1], main = "Coefficient of Determination: Height", xlab = "R-Squared", col = "grey")
+hist(results$t[,1], main = 'Coefficient of Determination: Height', xlab = 'RSquared',
+col = 'grey', prob = T)
+lines(density(results$t[,1]), col = 'blue')
+abline(v = ci_H, col = 'red')
+```
+
+#We can also index the results to see the results we want...what were the results on the 5,000 iterations for the height only regression?
+```{r}
+results_firstRegression <- results$t[ , 1]
+#This will give us the R-squared for each iteration of the first regression.
+```
+
