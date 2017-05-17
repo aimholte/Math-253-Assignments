@@ -1,0 +1,139 @@
+#Lab 1 (ISLR): Subset Selection Methods
+
+```{r}
+library(ISLR)
+fix(Hitters)
+names(Hitters)
+dim(Hitters)
+sum(is.na(Hitters$Salary))
+```
+```{r}
+Hitters <- na.omit(Hitters)
+dim(Hitters)
+sum(is.na(Hitters))
+```
+```{r}
+library(leaps)
+regfit.full <- regsubsets(Salary ~ ., Hitters)
+summary(regfit.full)
+```
+```{r}
+regfit.full <- regsubsets(Salary ~ ., data = Hitters, nvmax = 19)
+reg.summary <- summary(regfit.full)
+names(reg.summary)
+```
+```{r}
+reg.summary$rsq
+```
+#Plot RSS, adjusted r-squared, C_p, and BIC for all models at once to decide which model to select.
+```{r}
+par(mfrow = c(2, 2))
+plot(reg.summary$rss, xlab = "Number of Varaibles", ylab = "RSS", type = "l")
+plot(reg.summary$adjr2, xlab = "Number of Variables", ylab = "ADjusted RSq", type = "l")
+```
+#Plot the maximum
+```{r}
+par(mfrow = c(2, 2))
+plot(reg.summary$rss, xlab = "Number of Varaibles", ylab = "RSS", type = "l")
+plot(reg.summary$adjr2, xlab = "Number of Variables", ylab = "ADjusted RSq", type = "l")
+which.max(reg.summary$adjr2)
+#The max is 11.
+points(11, reg.summary$adjr2[11], col = "red", cex = 2, pch = 20)
+```
+#We can plot the C_p and BIC statistics in a similiar fashion. We are looking for the minimum in this case for both variables.
+```{r}
+plot(reg.summary$cp, xlab = "Number of Variables", ylab = "Cp", type = "l")
+which.min(reg.summary$cp)
+#The minimum is 10...let's graph that.
+points(10, reg.summary$cp[10], col = "red", cex = 2, pch = 20)
+#Do the same for BIC now
+which.min(reg.summary$bic)
+#The minimum for BIC is 6.
+plot(reg.summary$bic, xlab = "Number of Variables", ylab = "BIC", type = "l")
+points(6, reg.summary$bic[6], col = "red", cex = 2, pch = 20)
+```
+#regsubsets package can also do this for us.
+```{r}
+plot(regfit.full, scale = "r2")
+plot(regfit.full, scale = "adjr2")
+plot(regfit.full, scale = "Cp")
+plot(regfit.full, scale = "bic")
+```
+```{r}
+coef(regfit.full,6)
+```
+
+#Forward/Backward stepwise selection
+```{r}
+regfit.fwd <- regsubsets(Salary ~ ., data = Hitters, nvmax = 19, method = "forward")
+summary(regfit.fwd)
+regfit.bwd <- regsubsets(Salary ~ ., data = Hitters, nvmax = 19, method = "backward")
+summary(regfit.bwd)
+```
+```{r}
+coef(regfit.full, 7)
+coef(regfit.fwd, 7)
+coef(regfit.bwd, 7)
+```
+#Choosing among models using the validaiton set approach with cross-validation
+```{r}
+set.seed(1)
+train <- sample(c(TRUE, FALSE), nrow(Hitters), rep = TRUE)
+test <- (!train)
+```
+
+```{r}
+regfit.best <- regsubsets(Salary ~., data = Hitters[train, ], nvmax = 19)
+test.mat <- model.matrix(Salary ~., data = Hitters[test, ])
+val.errors <- rep(NA, 19)
+for(i in 1:19){
+  coefi <- coef(regfit.best, id = i)
+  pred <- test.mat[,names(coefi)]%*%coefi
+  val.errors[i] <- mean((Hitters$Salary[test] - pred)^2)
+}
+val.errors
+which.min(val.errors)
+#The best model is the one that contains 10 variables
+```
+#We can create our own function to make this a lot easier!
+```{r}
+predict.regsubsets <- function(object, newdata, id, ...){
+  form <- as.formula(object$call[[2]])
+  mat <- model.matrix(form, newdata)
+  coefi <- coef(object, id = id)
+  xvars <- names(coefi)
+  mat[,xvars]%*%coefi
+}
+```
+
+```{r}
+regfit.best <- regsubsets(Salary ~., data = Hitters, nvmax = 19)
+coef(regfit.best, 10)
+```
+```{r}
+k <- 10
+set.seed(1)
+folds <- sample(1:k, nrow(Hitters), replace = TRUE)
+cv.errors <- matrix(NA, k, 19, dimnames = list(NULL, paste(1:19)))
+for(j in 1:k){
+  best.fit <- regsubsets(Salary ~., data = Hitters[folds != j,],nvmax = 19)
+  for(i in 1:19){
+    pred <- predict(best.fit, Hitters[folds == j, ], id = i)
+    cv.errors[j,i] <- mean( (Hitters$Salary[folds == j] - pred)^2)
+  }
+}
+```
+
+```{r}
+mean.cv.errors <- apply(cv.errors, 2, mean)
+mean.cv.errors
+which.min(mean.cv.errors)
+#The minimum is 11.
+```
+#Cross validation selects an 11-variable model.
+```{r}
+#Perform best subset selection on the full data set in order to obtain the 11-variable model.
+reg.best <- regsubsets(Salary ~., data = Hitters, nvmax = 19)
+coef(reg.best, 11)
+```
+
