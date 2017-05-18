@@ -1,0 +1,93 @@
+#Lab 2 (ISLR) Subset Selection Methods: Ridge Regression and the Lasso
+
+```{r}
+library(ISLR)
+Hitters <- na.omit(Hitters)
+x <- model.matrix(Salary∼.,data = Hitters)[,-1]
+y <- Hitters$Salary
+```
+
+```{r}
+library(glmnet)
+grid <- 10^seq(10,-2,length = 100)
+ridge.mod <- glmnet(x,y,alpha=0,lambda=grid)
+```
+
+```{r}
+dim(coef(ridge.mod))
+```
+```{r}
+ridge.mod$lambda[50]
+coef(ridge.mod)[,50]
+#Coefficients when lambda is equal to 11,498.
+```
+
+```{r}
+ridge.mod$lambda[60]
+coef(ridge.mod)[,60]
+#Coefficients when lambda is equal to 705.
+```
+```{r}
+predict(ridge.mod, s = 50, type = "coefficients")[1:20, ]
+```
+```{r}
+set.seed(1)
+train <- sample(1:nrow(x), nrow(x)/2)
+test <- (-train)
+y.test <- y[test]
+```
+
+```{r}
+ridge.mod <- glmnet(x[train,],y[train],alpha = 0, lambda = grid, thresh = 1e-12)
+ridge.pred <- predict(ridge.mod, s = 4, newx = x[test,])
+mean((ridge.pred - y.test)^2)
+#This will calculate the test MSE.
+ridge.pred <- predict(ridge.mod, s = 1e10, newx = x[test,])
+mean((ridge.pred - y.test)^2)
+```
+#Using a regression model where lambda is equal to four reduces the test MSE.
+
+#What does least square look like? (Lambda = 0)
+```{r}
+ridge.pred <- predict(ridge.mod, s = 0, newx = x[test,],exact = T)
+mean((ridge.pred - y.test)^2)
+```
+```{r}
+lm(y~x, subset = train)
+predict(ridge.mod, s=0, exact = T, type = "coefficients")[1:20,]
+```
+```{r}
+set.seed(1)
+cv.out <- cv.glmnet(x[train,],y[train],alpha=0)
+plot(cv.out)
+bestlam <- cv.out$lambda.min
+bestlam
+#bestlam will give us the value for lambda for the smallest cross-validation error.
+```
+```{r}
+ridge.pred <- predict(ridge.mod, s = bestlam, newx = x[test,])
+mean((ridge.pred-y.test)^2)
+#The MSE associated for this value of lambda.
+```
+```{r}
+out <- glmnet(x,y,alpha = 0)
+predict(out, type = "coefficients", s = bestlam)[1:20,]
+```
+#The Lasso
+```{r}
+lasso.mod <- glmnet(x[train,],y[train], alpha = 1, lambda = grid)
+plot(lasso.mod)
+```
+```{r}
+set.seed(1)
+cv.out <- cv.glmnet(x[train,],y[train],alpha=1)
+plot(cv.out)
+bestlam <- cv.out$lambda.min
+lasso.pred <- predict(lasso.mod,s=bestlam,newx=x[test,])
+mean((lasso.pred-y.test)^2) #Test MSE
+out <- glmnet(x,y,alpha=1,lambda=grid)
+lasso.coef <- predict(out,type="coefficients",s=bestlam)[1:20,]
+lasso.coef
+```
+
+
